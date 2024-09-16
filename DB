@@ -1,1 +1,64 @@
 
+CREATE TABLE emp (
+    emp_id              VARCHAR2(30) PRIMARY KEY,
+    emp_password        VARCHAR2(60) NOT NULL,
+    emp_user_type       CHAR(1) DEFAULT 'N',
+    emp_no              VARCHAR2(10) NOT NULL,
+    emp_name            VARCHAR2(21) NOT NULL,
+    emp_level           VARCHAR2(9),
+    emp_dept            VARCHAR2(5),
+    emp_gender          VARCHAR2(1),
+    emp_contact         CHAR(11) NOT NULL,
+    emp_email           VARCHAR2(254),
+    emp_birth           DATE NULL,
+    emp_edu             VARCHAR2(50),
+    emp_sdate           DATE NOT NULL,
+    emp_memo            VARCHAR2(300),
+    emp_post            VARCHAR2(6),
+    emp_address1        VARCHAR2(300),
+    emp_address2        VARCHAR2(300),
+    emp_role            CHAR(20),
+    emp_signature       VARCHAR2(4000),
+    CHECK(regexp_like(emp_id, '^[a-z][a-z0-9]{4,19}$')),
+    CHECK(
+        regexp_like(emp_password, '^[A-Za-z0-9!@#$]{8,16}$')
+        AND regexp_like(emp_password, '[A-Z]+')
+        AND regexp_like(emp_password, '[a-z]+')
+        AND regexp_like(emp_password, '[0-9]+')
+        AND regexp_like(emp_password, '[!@#$]+')
+    ),
+    CHECK(regexp_like(emp_contact, '^010[1-9][0-9]{6,7}$'))
+);
+
+CREATE TABLE chatroom (
+    chatroom_no         NUMBER PRIMARY KEY,
+    chatroom_name       VARCHAR2(60),
+    chatroom_last_msg   VARCHAR2(2000),
+    chatroom_leave      CHAR(1)
+);
+
+CREATE SEQUENCE chatroom_seq;
+
+CREATE TABLE chat_connect (
+    emp_id              VARCHAR2(30) NOT NULL,
+    chatroom_no         NUMBER NOT NULL,
+    CONSTRAINT PK_chat_connect PRIMARY KEY (emp_id, chatroom_no),
+    CONSTRAINT FK_emp_TO_chat_connect FOREIGN KEY (emp_id)
+        REFERENCES emp (emp_id),
+    CONSTRAINT FK_chatroom_TO_chat_connect FOREIGN KEY (chatroom_no)
+        REFERENCES chatroom (chatroom_no)
+);
+
+CREATE TABLE chat (
+    chat_no             NUMBER PRIMARY KEY,
+    chatroom_no         NUMBER,
+    emp_id              VARCHAR2(30),
+    chat_content        VARCHAR2(2000),
+    chat_read           CHAR(1) DEFAULT '0' NOT NULL,
+    chat_time           DATE DEFAULT SYSDATE NOT NULL,
+    chat_delete         CHAR(1),
+    CONSTRAINT FK_chatroom_to_chat FOREIGN KEY (chatroom_no)
+        REFERENCES chatroom (chatroom_no),
+    CONSTRAINT FK_emp_to_chat FOREIGN KEY (emp_id)
+        REFERENCES emp (emp_id)
+);
