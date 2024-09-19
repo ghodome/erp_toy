@@ -1,5 +1,5 @@
 package com.erp.dao;
 
-public class EmpDao {
+public class EmpDao {//
 
 }
