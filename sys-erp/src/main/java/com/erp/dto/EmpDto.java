@@ -2,6 +2,9 @@ package com.erp.dto;
 
 import java.sql.Date;
 
+import lombok.Data;
+
+@Data
 public class EmpDto {
     private String empId;          // emp_id
     private String empPassword;    // emp_password
