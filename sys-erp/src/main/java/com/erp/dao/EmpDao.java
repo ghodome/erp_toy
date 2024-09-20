@@ -24,7 +24,7 @@ public class EmpDao {
 	//C
 	public void insert(EmpDto empDto) {
 		//sql문 작성
-		String sql = "";
+		String sql = "insert into emp() values()";
 		
 		// 비밀번호 Bcrypt 처리
         String encPw = encoder.encode(empDto.getEmpPassword()); // 비밀번호 해싱
