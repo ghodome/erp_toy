@@ -17,8 +17,8 @@ public class EmpDto {
     private String empHp;          // emp_hp
     private String empEmail;       // emp_email
     private Date empBirth;         // emp_birth
-    private Date empEdu;           // emp_edu
-    private String empSdate;       // emp_sdate
+    private String empEdu;           // emp_edu
+    private Date empSdate;       // emp_sdate
     private String empMemo;        // emp_memo
     private String empPost;        // emp_post
     private String empAddress1;    // emp_address1
