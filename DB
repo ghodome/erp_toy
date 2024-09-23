@@ -62,3 +62,32 @@ CREATE TABLE chat (
     CONSTRAINT FK_emp_to_chat FOREIGN KEY (emp_id)
         REFERENCES emp (emp_id)
 );
+
+-- category
+drop sequence category_seq;
+create sequence category_seq;
+
+drop table category;
+create table category (
+category_code number primary key,
+category_name varcgar2(200) not null,
+category_note varchar2(2000),
+category_enable char(1) not null,
+category_group number not null,
+category_origin references category(category_code) on delete cascade,
+category_depth number default 0 not null,
+check(category_enable in ('Y','N')),
+check(category_depth >= 0)
+);
+
+-- category_history
+drop sequence category_history_seq;
+create sequence category_history_seq;
+
+create table category_history(
+category_history_no number primary key,
+category_code number not null,
+category_history_type char(6) not null,
+category_history_time date default sysdate,
+check(category_history_type in ('등록','수정','삭제','잠금','해제'))
+);
