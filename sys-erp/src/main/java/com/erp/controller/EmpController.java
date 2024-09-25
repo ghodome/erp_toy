@@ -1,18 +1,15 @@
 package com.erp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.erp.dao.EmpDao;
 import com.erp.dto.EmpDto;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,7 +23,7 @@ public class EmpController {
 	// 회원가입
 	// Home.jsp에서 내용 받아오기
 	@PostMapping("/join")
-	public String join(@RequestBody EmpDto empDto) {
+	public String join(@ModelAttribute EmpDto empDto) {
 
 		System.out.println("result = " + empDto);
 		
