@@ -1,9 +1,15 @@
 package com.erp.restcontroller;
 
 import com.erp.dto.DocumentDto;
+
 import com.erp.service.DocumentService; // DocumentService를 통해 비즈니스 로직을 처리합니다.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import java.io.ByteArrayOutputStream;
 
 import java.util.List;
 
@@ -72,4 +78,25 @@ public class DocumentRestController {
     public void logDocumentUpdate(@PathVariable int documentNo, @RequestParam String updatedBy) {
         documentService.logDocumentUpdate(documentNo, updatedBy); // 이 메소드도 DocumentService에 정의되어 있어야 합니다.
     }
+    public byte[] generatePdf(int documentNo) {
+        // 문서 내용을 가져오는 로직
+        DocumentDto documentDto = getDocumentById(documentNo);
+        String content = "문서 제목: " + documentDto.getDocumentTitle() + "\n문서 내용: " + documentDto.getDocumentContent();
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        // PDF 생성
+        try {
+            PdfWriter writer = new PdfWriter(byteArrayOutputStream);
+            PdfDocument pdfDocument = new PdfDocument(writer);
+            Document document = new Document(pdfDocument);
+            document.add(new Paragraph(content));
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace(); // 예외 처리
+        }
+
+        return byteArrayOutputStream.toByteArray();
+    }
+    
 }
