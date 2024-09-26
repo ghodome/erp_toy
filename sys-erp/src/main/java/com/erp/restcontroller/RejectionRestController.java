@@ -17,7 +17,7 @@ public class RejectionRestController {
     // 반려 저장
     @PostMapping
     public void createRejection(@RequestBody RejectionDto rejectionDto) {
-        rejectionService.saveRejection(rejectionDto); // saveRejection으로 수정
+        rejectionService.saveRejection(rejectionDto); 
     }
 
     // 특정 문서에 대한 반려 내역 조회
