@@ -16,8 +16,7 @@ public class ChatMapper implements RowMapper<ChatDto> {
 		ChatDto chatDto = new ChatDto();
 		
 		chatDto.setChatNo(rs.getInt("chat_no"));
-		// 매퍼 수정완료
-		chatDto.setChatChatroomNo(rs.getInt("chatroom_no"));
+		chatDto.setChatroomNo(rs.getInt("chatroom_no"));
 		chatDto.setChatId(rs.getString("chat_id"));
 		chatDto.setChatContent(rs.getString("chat_content"));
 		chatDto.setChatRead(rs.getInt("chat_read"));

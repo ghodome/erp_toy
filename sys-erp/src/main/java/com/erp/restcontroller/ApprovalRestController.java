@@ -1,10 +1,12 @@
 package com.erp.restcontroller;
 
 import com.erp.dto.ApprovalDto;
-import com.erp.service.ApprovalService; // ApprovalService를 통해 비즈니스 로직을 처리합니다.
+import com.erp.service.ApprovalService;
+import com.erp.service.DocumentService; // 문서 상태 변경 서비스 추가
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -13,6 +15,9 @@ public class ApprovalRestController {
 
     @Autowired
     private ApprovalService approvalService;
+
+    @Autowired
+    private DocumentService documentService; // 문서 상태 변경 서비스 추가
 
     // 결재 저장
     @PostMapping
@@ -29,7 +34,10 @@ public class ApprovalRestController {
     // 결재 상태 업데이트
     @PutMapping("/{approvalNo}/status")
     public void updateApprovalStatus(@PathVariable int approvalNo, @RequestParam String status) {
+        // 결재 상태 업데이트
         approvalService.updateApprovalStatus(approvalNo, status);
+
+     
     }
 
     // 결재 삭제
@@ -41,15 +49,13 @@ public class ApprovalRestController {
     // 특정 결재자의 결재 내역 조회
     @GetMapping("/approver/{empId}")
     public List<ApprovalDto> getApprovalsByApprover(@PathVariable String empId) {
-       return approvalService.selectByApprover(empId);
-    	
+        return approvalService.selectByApprover(empId);
     }
 
     // 결재 상태별 조회
     @GetMapping("/status/{status}")
     public List<ApprovalDto> getApprovalsByStatus(@PathVariable String status) {
-    
-    	return approvalService.getApprovalsByStatus(status);
+        return approvalService.getApprovalsByStatus(status);
     }
 
     // 전체 결재 수 조회
