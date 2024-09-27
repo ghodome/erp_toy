@@ -1,7 +1,8 @@
 package com.erp.restcontroller;
 
+import com.erp.dao.EmpDao;
 import com.erp.dto.DocumentDto;
-
+import com.erp.dto.EmpDto;
 import com.erp.service.DocumentService; // DocumentService를 통해 비즈니스 로직을 처리합니다.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,13 @@ public class DocumentRestController {
 
     @Autowired
     private DocumentService documentService;
+    
+    @Autowired
+    private EmpDao empDao;
+    
+    public void saveSignature(EmpDto empDto) {
+        empDao.updateSignature(empDto);
+    }
 
     // 문서 저장
     @PostMapping
