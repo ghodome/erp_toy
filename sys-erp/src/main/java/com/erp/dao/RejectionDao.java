@@ -16,6 +16,7 @@ public class RejectionDao {
 
     @Autowired 
     private RejectionMapper rejectionMapper;
+    
 
     // 반려 저장
     public void insert(RejectionDto rejectionDto) {

@@ -48,4 +48,5 @@ public class RejectionService {
     public int countRejectedDocuments(String empId) {
         return rejectionDao.countRejectedDocuments(empId);
     }
+    
 }
