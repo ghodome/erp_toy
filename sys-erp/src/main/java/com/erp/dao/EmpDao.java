@@ -22,6 +22,15 @@ public class EmpDao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	public void updateSignature(EmpDto empDto) { //민철
+	    String sql = "UPDATE emp SET emp_signature = ? WHERE emp_id = ?";
+	    Object[] data = {
+	        empDto.getEmpSignature(), // 서명 (Base64 인코딩된 서명 데이터)
+	        empDto.getEmpId() // 사원 ID
+	    };
+	    jdbcTemplate.update(sql, data);
+	}
 
 	// C
 	// 사원 정보 입력 -> join.jsp에서 받아오는 값 + 비밀번호 암호화 저장
@@ -63,3 +72,7 @@ public class EmpDao {
 	// D
 
 }
+
+
+
+
