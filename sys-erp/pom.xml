@@ -169,7 +169,15 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- 스프링부트 시큐리티 JWT 라이브러리 추가 -->
+		<!-- OAUTH2 인증 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
+			<version>6.3.3</version>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-jwt</artifactId>
