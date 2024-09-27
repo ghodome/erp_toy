@@ -36,7 +36,9 @@ public class ChatDao {
 	public List<ChatDto> selectListByChatroomNo(int keyword) {
 	    String sql = "select * from chat where chatroom_no = ? "
 	    		+ "order by chat_no asc";
+
 	    Object[] data = {keyword};
 	    return jdbcTemplate.query(sql, chatMapper, data);
 	}
+
 }

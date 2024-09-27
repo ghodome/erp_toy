@@ -36,8 +36,9 @@ public class SecurityConfiguration {
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable()) // CSRF 비활성화
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/emp/login").permitAll() // 로그인 엔드포인트 허용
 						.requestMatchers("/v3/api-docs/**", // API 문서 경로 허용
-								"/swagger-resources/**", "/swagger-ui/**", "/webjars/**")
-						.permitAll() // Swagger 엔드포인트 허용
+											"/swagger-resources/**", 
+											"/swagger-ui/**", 
+											"/webjars/**").permitAll() // Swagger 엔드포인트 허용
 						.anyRequest().authenticated() // 나머지 요청은 인증 필요
 				).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을
 																												// 사용하지
