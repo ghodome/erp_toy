@@ -20,8 +20,14 @@ public class ChatRestController {
 	@Autowired
 	private ChatDao chatDao;
 	
+	
+	@GetMapping("/")
+	public List<ChatDto> list(){
+		return chatDao.selectList();
+	}
+	
 	@GetMapping("/keyword/{keyword}")
-	public List<ChatDto> chatroomContent(@PathVariable String keyword){
+	public List<ChatDto> chatroomContent(@PathVariable int keyword){
 		List<ChatDto> list = chatDao.selectListByChatroomNo(keyword);
 		return list;
 	}
