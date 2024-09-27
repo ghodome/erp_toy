@@ -57,10 +57,7 @@ public class ApprovalService {
         approvalDao.deleteApproval(approvalNo);
     }
 
-    @Transactional(readOnly = true)
-    public List<ApprovalDto> selectByApprover(String empId) {
-        return approvalDao.selectByApprover(empId);
-    }
+    
 
     @Transactional(readOnly = true)
     public List<ApprovalDto> getApprovalsByStatus(String status) {

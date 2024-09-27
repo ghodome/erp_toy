@@ -16,6 +16,24 @@ public class ApprovalDao {
 
     @Autowired
     private ApprovalMapper approvalMapper;
+    
+    public void insertApprovals(int documentId, List<ApprovalDto> approvalList) {
+        String sql = "INSERT INTO approval (approval_document, approval_emp, approval_order, approval_status) VALUES (?, ?, ?, '대기중')";
+
+        // 파라미터로 전달받은 approvalList를 순회
+        for (ApprovalDto approval : approvalList) {
+            Object[] data = {
+                documentId,               // 문서 ID
+                approval.getApprovalEmp(), // 사원 ID (결재자)
+                approval.getApprovalOrder() // 결재 순서
+            };
+            jdbcTemplate.update(sql, data);
+        }
+    }
+
+    
+    
+    
 
     // 결재 저장
     public void insert(ApprovalDto approvalDto) {
@@ -44,7 +62,7 @@ public class ApprovalDao {
     }
 
     // 특정 결재자에 대한 결재 내역 조회
-    public List<ApprovalDto> selectByApprover(String empId) {
+    public List<ApprovalDto> selectByApproval(String empId) {
         String sql = "SELECT * FROM approval WHERE approval_emp = ?";
         Object[] data = {empId};
         return jdbcTemplate.query(sql, approvalMapper, data);
@@ -90,12 +108,11 @@ public class ApprovalDao {
         Object[] data = {approvalNo};
         return jdbcTemplate.queryForObject(sql, data, Integer.class);
     }
- // 결재자 설정 메서드 추가 예시
-    public void saveApprovers(int documentId, List<String> approvers) {
-        String sql = "INSERT INTO approvers (document_id, approver_emp_id) VALUES (?, ?)";
-        for (String approver : approvers) {
-            Object[] data = { documentId, approver };
-            jdbcTemplate.update(sql, data);
-        }
-}
+ 
+
+    public List<ApprovalDto> getApproval() {
+        String sql = "SELECT * FROM approval"; 
+        return jdbcTemplate.query(sql, approvalMapper);
+    }
+
 }

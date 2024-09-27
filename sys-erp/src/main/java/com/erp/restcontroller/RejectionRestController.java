@@ -1,18 +1,31 @@
 package com.erp.restcontroller;
 
-import com.erp.dto.RejectionDto;
-import com.erp.service.RejectionService; // RejectionService를 통해 비즈니스 로직을 처리합니다.
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.erp.dto.RejectionDto;
+import com.erp.service.ApprovalService;
+import com.erp.service.RejectionService; // RejectionService를 통해 비즈니스 로직을 처리합니다.
 
 @RestController
-@RequestMapping("/rejections")
+@RequestMapping("/api")
 public class RejectionRestController {
 
     @Autowired
     private RejectionService rejectionService;
+    @Autowired
+    private ApprovalService approvalService;
 
     // 반려 저장
     @PostMapping
@@ -56,4 +69,5 @@ public class RejectionRestController {
     public int countRejectedDocuments(@PathVariable String empId) {
         return rejectionService.countRejectedDocuments(empId);
     }
+    
 }

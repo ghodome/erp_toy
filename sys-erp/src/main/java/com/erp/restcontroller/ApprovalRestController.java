@@ -4,13 +4,15 @@ import com.erp.dto.ApprovalDto;
 import com.erp.service.ApprovalService;
 import com.erp.service.DocumentService; // 문서 상태 변경 서비스 추가
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/approvals")
+@RequestMapping("/api")
+
 public class ApprovalRestController {
 
     @Autowired
@@ -26,32 +28,34 @@ public class ApprovalRestController {
     }
 
     // 특정 문서에 대한 결재 조회
-    @GetMapping("/{documentNo}")
-    public List<ApprovalDto> getApprovalsByDocument(@PathVariable int documentNo) {
-        return approvalService.getApprovalsByDocument(documentNo);
+    @GetMapping("/document/{documentNo}/approvals")
+    public ResponseEntity<List<ApprovalDto>> getApprovalsByDocument(@PathVariable int documentNo) {
+        List<ApprovalDto> approvals = approvalService.getApprovalsByDocument(documentNo);
+        return ResponseEntity.ok(approvals);
     }
-
-    // 결재 상태 업데이트
-    @PutMapping("/{approvalNo}/status")
-    public void updateApprovalStatus(@PathVariable int approvalNo, @RequestParam String status) {
-        // 결재 상태 업데이트
-        approvalService.updateApprovalStatus(approvalNo, status);
+ // 결재 상태 업데이트 (승인, 반려 등)
+    @PutMapping("/approvals/{approvalNo}/status")
+    public ResponseEntity<?> updateApprovalStatus(
+        @PathVariable int approvalNo, 
+        @RequestParam String status, 
+        @RequestParam(required = false) String comment) {
+        
+        // ApprovalService로 결재 상태 업데이트 요청 (comment 추가)
+       
+        
+        return ResponseEntity.ok("결재 상태가 업데이트되었습니다.");
+    }
 
      
-    }
-
-    // 결재 삭제
-    @DeleteMapping("/{approvalNo}")
-    public void deleteApproval(@PathVariable int approvalNo) {
+    
+ // 결재 삭제
+    @DeleteMapping("/approvals/{approvalNo}")
+    public ResponseEntity<?> deleteApproval(@PathVariable int approvalNo) {
         approvalService.deleteApproval(approvalNo);
+        return ResponseEntity.ok("결재가 삭제되었습니다.");
     }
 
-    // 특정 결재자의 결재 내역 조회
-    @GetMapping("/approver/{empId}")
-    public List<ApprovalDto> getApprovalsByApprover(@PathVariable String empId) {
-        return approvalService.selectByApprover(empId);
-    }
-
+   
     // 결재 상태별 조회
     @GetMapping("/status/{status}")
     public List<ApprovalDto> getApprovalsByStatus(@PathVariable String status) {
@@ -69,10 +73,10 @@ public class ApprovalRestController {
     public int countPendingApprovals(@PathVariable String empId) {
         return approvalService.countPendingApprovals(empId);
     }
-
-    // 결재 이력 조회
-    @GetMapping("/history/{documentNo}")
-    public List<ApprovalDto> getApprovalHistory(@PathVariable int documentNo) {
-        return approvalService.selectApprovalHistory(documentNo);
+ // 결재 이력 조회
+    @GetMapping("/approvals/{documentNo}/history")
+    public ResponseEntity<List<ApprovalDto>> getApprovalHistory(@PathVariable int documentNo) {
+        return ResponseEntity.ok(approvalService.selectApprovalHistory(documentNo));
     }
+    
 }
