@@ -21,4 +21,7 @@ public interface ApprovalDao {
     List<ApprovalDto> getAllApprovals();
     
     List<ApprovalDto> getApprovalsByEmp(@Param("approvalEmp") String approvalEmp);
+    
+    // 결재 상태별 문서 조회
+    List<ApprovalDto> getApprovalsByStatus(@Param("approvalStatus") String approvalStatus);
 }
