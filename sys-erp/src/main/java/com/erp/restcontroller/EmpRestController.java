@@ -48,10 +48,6 @@ public class EmpRestController {
 			String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail());
 			String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail());
 
-			// 토큰 내용을 STS 콘솔에 출력
-			System.out.println("Access Token: " + accessToken);
-			System.out.println("Refresh Token: " + refreshToken);
-
 			// LoginResponseDto 객체 생성
 			LoginResponseDto responseDto = new LoginResponseDto();
 			responseDto.setAccessToken(accessToken);
@@ -60,14 +56,15 @@ public class EmpRestController {
 			// Access Token 쿠키 설정
 	        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
 	        accessTokenCookie.setHttpOnly(true); // HttpOnly 설정
-	        accessTokenCookie.setSecure(true); // Secure 설정 (HTTPS 환경에서)
+//	        accessTokenCookie.setSecure(true); // Secure 설정 (HTTPS 환경에서)
+	        accessTokenCookie.setSecure(false); // Secure 설정 (HTTPS 환경에서)
 	        accessTokenCookie.setPath("/"); // Path 설정
 	        accessTokenCookie.setMaxAge(60 * 15); // 15분 만료
 
 	        // Refresh Token 쿠키 설정
 	        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
 	        refreshTokenCookie.setHttpOnly(true);
-	        refreshTokenCookie.setSecure(true);
+	        refreshTokenCookie.setSecure(false);
 	        refreshTokenCookie.setPath("/");
 	        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7일 만료
 
@@ -77,7 +74,7 @@ public class EmpRestController {
 
 			return ResponseEntity.ok(responseDto);
 		} else {
-			return ResponseEntity.status(401).body(null); // Unauthorized
+			return ResponseEntity.status(401).body("로그인 실패: 사용자 정보가 올바르지 않습니다."); // 더 유용한 오류 메시지
 		}
 	}
 }

@@ -29,11 +29,10 @@ public class ChatDao {
 		jdbcTemplate.update(sql, data);
 	}
 	
-	public List<ChatDto> selectListByChatroomNo(String keyword){
-		
-		String sql = "select * from chat where instr(chatroom_no, ?) > 0 "
-				+ "order by chat_no asc";
-		Object[] data = {keyword};
-		return jdbcTemplate.query(sql, chatMapper, data);
+	public List<ChatDto> selectListByChatroomNo(Integer keyword) {
+	    String sql = "select * from chat where chatroom_no = ? order by chat_no asc";
+	    Object[] data = {keyword};
+	    return jdbcTemplate.query(sql, chatMapper, data);
 	}
+
 }

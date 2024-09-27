@@ -21,7 +21,7 @@ public class ChatRestController {
 	private ChatDao chatDao;
 	
 	@GetMapping("/keyword/{keyword}")
-	public List<ChatDto> chatroomContent(@PathVariable String keyword){
+	public List<ChatDto> chatroomContent(@PathVariable Integer keyword){
 		List<ChatDto> list = chatDao.selectListByChatroomNo(keyword);
 		return list;
 	}

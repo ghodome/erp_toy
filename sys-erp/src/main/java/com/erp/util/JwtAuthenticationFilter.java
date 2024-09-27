@@ -25,14 +25,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtProvider jwtProvider;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;  // CustomUserDetailsService로 변경
+    private CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludePath = { "/swagger-ui/index.html", "/swagger-ui/swagger-ui-standalone-preset.js",
-                "/swagger-ui/swagger-initializer.js", "/swagger-ui/swagger-ui-bundle.js", "/swagger-ui/swagger-ui.css",
-                "/swagger-ui/index.css", "/swagger-ui/favicon-32x32.png", "/swagger-ui/favicon-16x16.png",
-                "/api-docs/json/swagger-config", "/api-docs/json" };
+        String[] excludePath = { 
+            "/swagger-ui/**", 
+            "/v3/api-docs/**", 
+            "/swagger-resources/**", 
+            "/webjars/**", 
+            "/api-docs/json/swagger-config", 
+            "/api-docs/json", 
+            "/chat/**" 
+        };
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }
@@ -44,6 +49,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 쿠키에서 토큰 추출
         Cookie[] cookies = request.getCookies();
         String accessToken = null;
+
+        // Authorization 헤더에서 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            accessToken = authorizationHeader.substring(7);
+        }
+
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("accessToken")) {
@@ -53,13 +65,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 토큰 검증 및 인증 설정
-        if (accessToken != null && jwtProvider.validateToken(accessToken)) {
-            String username = jwtProvider.extractAllClaims(accessToken).get("loginId", String.class);
-            // UserDetails 로드 및 SecurityContext 설정
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);  // 커스텀 서비스 사용
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
-                    null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (accessToken != null) {
+            if (jwtProvider.validateToken(accessToken)) {
+                String username = jwtProvider.extractAllClaims(accessToken).get("loginId", String.class);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                System.out.println("Invalid token: " + accessToken);
+            }
+        } else {
+            System.out.println("Access token is missing.");
         }
         
         filterChain.doFilter(request, response);
