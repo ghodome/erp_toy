@@ -3,6 +3,8 @@ package com.erp.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +42,7 @@ public class JwtProvider {
                 .compact();
     }
 
+    //모든 claim 추출
     public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
@@ -47,4 +50,24 @@ public class JwtProvider {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    // 요청 헤더에서 JWT 토큰 추출
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    // JWT 유효성 검증 -> 향상 예정, 지금당장은 단순 추출 하여 있을경우 true 반환
+	public boolean validateToken(String token) {
+
+		try {
+			extractAllClaims(token);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+	}
 }
