@@ -23,6 +23,11 @@ public class ApprovalService {
     public void modifyApproval(ApprovalDto approvalDto) {
         approvalDao.updateApproval(approvalDto);
     }
+    
+    // 결재 상태별 문서 조회
+    public List<ApprovalDto> findApprovalsByStatus(String approvalStatus) {
+        return approvalDao.getApprovalsByStatus(approvalStatus);
+    }
 
     // 결재 번호로 결재 조회
     public ApprovalDto findApprovalByNo(int approvalNo) {
@@ -44,5 +49,16 @@ public class ApprovalService {
         for (ApprovalDto approvalLine : approvalLines) {
             approvalDao.insertApproval(approvalLine);
         }
+    }
+    // 결재자에게 보이는 문서만 조회하는 로직
+    public List<ApprovalDto> findVisibleApprovalsForEmp(String approvalEmp) {
+        List<ApprovalDto> approvals = approvalDao.getApprovalsByEmp(approvalEmp);
+        
+        // 중간 결재자가 반려하거나 아직 검토하지 않은 경우 다음 결재자에게 보이지 않도록 필터링
+        approvals.removeIf(approval -> 
+            "반려".equals(approval.getApprovalStatus()) || 
+            "미검토".equals(approval.getApprovalStatus())); // "반려"와 "미검토" 상태는 다음 결재자에게 보이지 않음
+
+        return approvals;
     }
 }

@@ -82,4 +82,17 @@ public class ApprovalRestController {
         List<ApprovalDto> approvals = approvalService.findApprovalsByEmp(approvalEmp);
         return ResponseEntity.ok(approvals);
     }
+    
+    // 결재 상태별 문서 조회 API
+    @GetMapping("/status/{approvalStatus}")
+    public ResponseEntity<List<ApprovalDto>> getApprovalsByStatus(@PathVariable String approvalStatus) {
+        List<ApprovalDto> approvals = approvalService.findApprovalsByStatus(approvalStatus);
+        return ResponseEntity.ok(approvals);
+    }
+    // 결재자에게 보이는 문서만 조회하는 API
+    @GetMapping("/visible/{empId}")
+    public ResponseEntity<List<ApprovalDto>> getVisibleApprovals(@PathVariable String empId) {
+        List<ApprovalDto> approvals = approvalService.findVisibleApprovalsForEmp(empId);
+        return ResponseEntity.ok(approvals);
+    }
 }
