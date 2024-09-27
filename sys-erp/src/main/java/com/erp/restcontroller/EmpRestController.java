@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.erp.dao.EmpDao;
 import com.erp.dto.EmpDto;
 import com.erp.vo.LoginVO;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import com.erp.dto.LoginResponseDto;
 import com.erp.util.JwtProvider;
 
@@ -37,13 +41,14 @@ public class EmpRestController {
 
 	// 로그인
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginVO loginVO) {
+	public ResponseEntity<?> login(@RequestBody LoginVO loginVO, HttpServletResponse response) {
 		EmpDto empDto = empDao.selectOneById(loginVO.getEmpId());
 		if (empDto != null && encoder.matches(loginVO.getEmpPassword(), empDto.getEmpPassword())) {
+			// 토큰(Access / Refresh) 생성
 			String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail());
 			String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail());
 
-			// 토큰 내용을 콘솔에 출력
+			// 토큰 내용을 STS 콘솔에 출력
 			System.out.println("Access Token: " + accessToken);
 			System.out.println("Refresh Token: " + refreshToken);
 
@@ -51,6 +56,24 @@ public class EmpRestController {
 			LoginResponseDto responseDto = new LoginResponseDto();
 			responseDto.setAccessToken(accessToken);
 			responseDto.setRefreshToken(refreshToken);
+			
+			// Access Token 쿠키 설정
+	        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+	        accessTokenCookie.setHttpOnly(true); // HttpOnly 설정
+	        accessTokenCookie.setSecure(true); // Secure 설정 (HTTPS 환경에서)
+	        accessTokenCookie.setPath("/"); // Path 설정
+	        accessTokenCookie.setMaxAge(60 * 15); // 15분 만료
+
+	        // Refresh Token 쿠키 설정
+	        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+	        refreshTokenCookie.setHttpOnly(true);
+	        refreshTokenCookie.setSecure(true);
+	        refreshTokenCookie.setPath("/");
+	        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7일 만료
+
+	        // 쿠키 응답에 추가
+	        response.addCookie(accessTokenCookie);
+	        response.addCookie(refreshTokenCookie);
 
 			return ResponseEntity.ok(responseDto);
 		} else {
