@@ -1,82 +1,85 @@
 package com.erp.restcontroller;
 
-import com.erp.dto.ApprovalDto;
-import com.erp.service.ApprovalService;
-import com.erp.service.DocumentService; // 문서 상태 변경 서비스 추가
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
+import com.erp.dto.ApprovalDto;
+import com.erp.service.ApprovalService;
 
 @RestController
-@RequestMapping("/api")
-
+@RequestMapping("/api/approvals")
 public class ApprovalRestController {
 
     @Autowired
     private ApprovalService approvalService;
 
-    @Autowired
-    private DocumentService documentService; // 문서 상태 변경 서비스 추가
-
-    // 결재 저장
+    /**
+     * 결재 등록 (단일)
+     * @param approvalDto
+     * @return 성공 메시지
+     */
     @PostMapping
-    public void createApproval(@RequestBody ApprovalDto approvalDto) {
-        approvalService.saveApproval(approvalDto);
+    public ResponseEntity<String> createApproval(@RequestBody ApprovalDto approvalDto) {
+        approvalService.addApproval(approvalDto);
+        return ResponseEntity.ok("Approval created successfully");
     }
 
-    // 특정 문서에 대한 결재 조회
-    @GetMapping("/document/{documentNo}/approvals")
-    public ResponseEntity<List<ApprovalDto>> getApprovalsByDocument(@PathVariable int documentNo) {
-        List<ApprovalDto> approvals = approvalService.getApprovalsByDocument(documentNo);
+    /**
+     * 결재선 등록 (복수)
+     * @param approvalLines 결재선 리스트
+     * @return 성공 메시지
+     */
+    @PostMapping("/lines")
+    public ResponseEntity<String> createApprovalLine(@RequestBody List<ApprovalDto> approvalLines) {
+        approvalService.saveApprovalLine(approvalLines);
+        return ResponseEntity.ok("Approval lines created successfully");
+    }
+
+    /**
+     * 결재 정보 업데이트
+     * @param approvalNo 결재 번호
+     * @param approvalDto 업데이트할 결재 정보
+     * @return 성공 메시지
+     */
+    @PutMapping("/{approvalNo}")
+    public ResponseEntity<String> updateApproval(@PathVariable int approvalNo, @RequestBody ApprovalDto approvalDto) {
+        approvalDto.setApprovalNo(approvalNo);
+        approvalService.modifyApproval(approvalDto);
+        return ResponseEntity.ok("Approval updated successfully");
+    }
+
+    /**
+     * 결재 번호로 특정 결재 조회
+     * @param approvalNo 결재 번호
+     * @return 조회된 결재 정보
+     */
+    @GetMapping("/{approvalNo}")
+    public ResponseEntity<ApprovalDto> getApprovalByNo(@PathVariable int approvalNo) {
+        ApprovalDto approval = approvalService.findApprovalByNo(approvalNo);
+        return ResponseEntity.ok(approval);
+    }
+
+    /**
+     * 전체 결재 목록 조회
+     * @return 모든 결재 정보 리스트
+     */
+    @GetMapping
+    public ResponseEntity<List<ApprovalDto>> getAllApprovals() {
+        List<ApprovalDto> approvals = approvalService.findAllApprovals();
         return ResponseEntity.ok(approvals);
     }
- // 결재 상태 업데이트 (승인, 반려 등)
-    @PutMapping("/approvals/{approvalNo}/status")
-    public ResponseEntity<?> updateApprovalStatus(
-        @PathVariable int approvalNo, 
-        @RequestParam String status, 
-        @RequestParam(required = false) String comment) {
-        
-        // ApprovalService로 결재 상태 업데이트 요청 (comment 추가)
-       
-        
-        return ResponseEntity.ok("결재 상태가 업데이트되었습니다.");
-    }
 
-     
-    
- // 결재 삭제
-    @DeleteMapping("/approvals/{approvalNo}")
-    public ResponseEntity<?> deleteApproval(@PathVariable int approvalNo) {
-        approvalService.deleteApproval(approvalNo);
-        return ResponseEntity.ok("결재가 삭제되었습니다.");
+    /**
+     * 특정 사원의 결재 정보 조회
+     * @param approvalEmp 결재 사원 ID
+     * @return 해당 사원의 결재 정보 리스트
+     */
+    @GetMapping("/employee/{approvalEmp}")
+    public ResponseEntity<List<ApprovalDto>> getApprovalsByEmployee(@PathVariable String approvalEmp) {
+        List<ApprovalDto> approvals = approvalService.findApprovalsByEmp(approvalEmp);
+        return ResponseEntity.ok(approvals);
     }
-
-   
-    // 결재 상태별 조회
-    @GetMapping("/status/{status}")
-    public List<ApprovalDto> getApprovalsByStatus(@PathVariable String status) {
-        return approvalService.getApprovalsByStatus(status);
-    }
-
-    // 전체 결재 수 조회
-    @GetMapping("/count")
-    public int countAllApprovals() {
-        return approvalService.countAll();
-    }
-
-    // 결재 대기 중인 문서 수 조회
-    @GetMapping("/pending/{empId}/count")
-    public int countPendingApprovals(@PathVariable String empId) {
-        return approvalService.countPendingApprovals(empId);
-    }
- // 결재 이력 조회
-    @GetMapping("/approvals/{documentNo}/history")
-    public ResponseEntity<List<ApprovalDto>> getApprovalHistory(@PathVariable int documentNo) {
-        return ResponseEntity.ok(approvalService.selectApprovalHistory(documentNo));
-    }
-    
 }

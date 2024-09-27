@@ -1,34 +1,26 @@
 package com.erp.service;
 
-import com.erp.dao.ApprovalHistoryDao;
-import com.erp.dto.ApprovalHistoryDto;
+import java.util.List;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.erp.dao.ApprovalHistoryDao;
+
+import com.erp.dto.ApprovalHistoryDto;
 
 @Service
 public class ApprovalHistoryService {
 
     @Autowired
-    private ApprovalHistoryDao approvalHistoryDao;
+    private ApprovalHistoryDao approvalHistoryDAO;
 
-    // 새로운 결재 이력 추가
-    @Transactional
-    public void saveApprovalHistory(ApprovalHistoryDto approvalHistoryDto) {
-        approvalHistoryDao.insert(approvalHistoryDto);
+    public void addApprovalHistory(ApprovalHistoryDto approvalHistoryDto) {
+        approvalHistoryDAO.insertApprovalHistory(approvalHistoryDto);
     }
 
-    // 특정 결재에 대한 이력 조회
-    @Transactional(readOnly = true)
-    public List<ApprovalHistoryDto> getApprovalHistoryByApprovalNo(int approvalNo) {
-        return approvalHistoryDao.selectByApprovalNo(approvalNo);
-    }
-
-    // 모든 결재 이력 조회
-    @Transactional(readOnly = true)
-    public List<ApprovalHistoryDto> getAllApprovalHistory() {
-        return approvalHistoryDao.selectAll();
+    public List<ApprovalHistoryDto> findApprovalHistoryByApprovalNo(int approvalNo) {
+        return approvalHistoryDAO.getApprovalHistoryByApprovalNo(approvalNo);
     }
 }
