@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class ChatDto {
 	private int chatNo;
-	private int chatChatroomNo;
+	private int chatroomNo;
 	private String chatId;
 	private String chatContent;
 	private int chatRead;
