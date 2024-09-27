@@ -1,65 +1,51 @@
 package com.erp.restcontroller;
 
-import com.erp.dto.NotificationDto;
-import com.erp.service.NotificationService; // NotificationService를 통해 비즈니스 로직을 처리합니다.
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.erp.dto.NotificationDto;
+import com.erp.service.NotificationService;
+
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/notifications")
 public class NotificationRestController {
 
     @Autowired
     private NotificationService notificationService;
 
-    // 알림 저장
+    /**
+     * 알림 등록
+     * @param notificationDto
+     * @return 성공 메시지
+     */
     @PostMapping
-    public void createNotification(@RequestBody NotificationDto notificationDto) {
-        notificationService.sendNotification(notificationDto); 
+    public ResponseEntity<String> createNotification(@RequestBody NotificationDto notificationDto) {
+        notificationService.addNotification(notificationDto);
+        return ResponseEntity.ok("Notification created successfully");
     }
 
-    // 특정 사용자에 대한 알림 조회
-    @GetMapping("/employee/{empId}")
-    public List<NotificationDto> getNotificationsByEmployee(@PathVariable String empId) {
-        return notificationService.getNotificationsByEmployee(empId); 
+    /**
+     * 특정 사원의 알림 목록 조회
+     * @param notificationEmp 사원 ID
+     * @return 알림 리스트
+     */
+    @GetMapping("/employee/{notificationEmp}")
+    public ResponseEntity<List<NotificationDto>> getNotificationsByEmployee(@PathVariable String notificationEmp) {
+        List<NotificationDto> notifications = notificationService.findNotificationsByEmp(notificationEmp);
+        return ResponseEntity.ok(notifications);
     }
 
-    // 읽지 않은 알림 조회
-    @GetMapping("/employee/{empId}/unread")
-    public List<NotificationDto> getUnreadNotificationsByEmployee(@PathVariable String empId) {
-        return notificationService.getUnreadNotificationsByEmployee(empId); 
-    }
-
-    // 특정 알림 유형 조회
-    @GetMapping("/type/{notificationType}")
-    public List<NotificationDto> getNotificationsByType(@PathVariable String notificationType) {
-      
-    	return notificationService.getNotificationsByType(notificationType);
-    }
-
-    // 알림 읽음 처리
-    @PutMapping("/{notificationNo}/read")
-    public void markNotificationAsRead(@PathVariable int notificationNo) {
-        notificationService.markNotificationAsRead(notificationNo); 
-    }
-
-    // 알림 삭제
-    @DeleteMapping("/{notificationNo}")
-    public void deleteNotification(@PathVariable int notificationNo) {
-        notificationService.deleteNotification(notificationNo);
-    }
-
-    // 전체 알림 수 조회
-    @GetMapping("/count")
-    public int countAllNotifications() {
-        return notificationService.countAll(); 
-    }
-
-    // 알림 읽음 상태 변경 이력 기록
-    @PostMapping("/{notificationNo}/read/history")
-    public void logNotificationReadChange(@PathVariable int notificationNo, @RequestParam String empId) {
-        notificationService.logNotificationReadChange(notificationNo, empId);
+    /**
+     * 알림 읽음 처리
+     * @param notificationNo 알림 번호
+     * @return 성공 메시지
+     */
+    @PutMapping("/read/{notificationNo}")
+    public ResponseEntity<String> markNotificationAsRead(@PathVariable int notificationNo) {
+        notificationService.markNotificationAsRead(notificationNo);
+        return ResponseEntity.ok("Notification marked as read");
     }
 }
