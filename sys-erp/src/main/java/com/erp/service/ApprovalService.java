@@ -81,4 +81,5 @@ public class ApprovalService {
     public List<ApprovalDto> selectApprovalHistory(int documentNo) {
         return approvalDao.selectApprovalHistory(documentNo);
     }
+    
 }

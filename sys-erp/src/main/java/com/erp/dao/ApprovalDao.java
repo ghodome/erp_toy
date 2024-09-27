@@ -90,4 +90,12 @@ public class ApprovalDao {
         Object[] data = {approvalNo};
         return jdbcTemplate.queryForObject(sql, data, Integer.class);
     }
+ // 결재자 설정 메서드 추가 예시
+    public void saveApprovers(int documentId, List<String> approvers) {
+        String sql = "INSERT INTO approvers (document_id, approver_emp_id) VALUES (?, ?)";
+        for (String approver : approvers) {
+            Object[] data = { documentId, approver };
+            jdbcTemplate.update(sql, data);
+        }
+}
 }
