@@ -22,10 +22,11 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String loginId, String email) {
+    public String generateToken(String loginId, String email, String role) {
         return Jwts.builder()
                 .claim("loginId", loginId) // 커스텀 필드 추가
                 .claim("email", email) // 커스텀 필드 추가
+                .claim("roles", role) // 커스텀 필드 추가
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1시간
                 .signWith(getSigningKey())

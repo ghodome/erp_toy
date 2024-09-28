@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.erp.dao.EmpDao;
 import com.erp.dto.EmpDto;
 import com.erp.vo.LoginVO;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-
 import com.erp.dto.LoginResponseDto;
 import com.erp.service.EmpService;
 import com.erp.util.JwtProvider;
@@ -49,7 +47,7 @@ public class EmpRestController {
         EmpDto empDto = empDao.selectOneById(loginVO.getEmpId());
         if (empDto != null && encoder.matches(loginVO.getEmpPassword(), empDto.getEmpPassword())) {
             // 토큰(Access / Refresh) 생성
-            String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail());
+            String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail(), empDto.getEmpRole());
             String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail());
 
             // LoginResponseDto 객체 생성
