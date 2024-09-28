@@ -2,16 +2,16 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.erp.dao.NotificationDAO">
+<mapper namespace="NotificationDao">
 
     <!-- 알림 삽입 -->
-    <insert id="insertNotification" parameterType="com.erp.dto.NotificationDto">
+    <insert id="insertNotification" parameterType="NotificationDto">
         INSERT INTO notifications (notification_emp, notification_document, notification_type, notification_message, notification_createAt, notification_read)
         VALUES (#{notificationEmp}, #{notificationDocument}, #{notificationType}, #{notificationMessage}, #{notificationCreateAt}, #{notificationRead})
     </insert>
 
     <!-- 특정 사원의 알림 조회 -->
-    <select id="getNotificationsByEmp" parameterType="string" resultType="com.erp.dto.NotificationDto">
+    <select id="getNotificationsByEmp" parameterType="string" resultType="NotificationDto">
         SELECT * FROM notifications WHERE notification_emp = #{notificationEmp}
     </select>
 
