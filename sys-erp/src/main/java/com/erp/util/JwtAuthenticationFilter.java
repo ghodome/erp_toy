@@ -29,15 +29,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String[] excludePath = { "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/api-docs/json/swagger-config",
-				"/api-docs/json", };
+		String[] excludePath = { 
+		        "/swagger-ui/**",
+		        "/v3/**",
+		        "/swagger-resources/**",
+		        "/webjars/**",
+		        "/api-docs/**"
+		    };
 		String path = request.getRequestURI();
-		return Arrays.stream(excludePath).anyMatch(path::startsWith);
+
+		// 경로가 매칭되는지 확인
+		return Arrays.stream(excludePath).anyMatch(pattern -> path.matches(pattern.replace("**", ".*")));
 	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 	        throws ServletException, IOException {
+		
+		// 요청 URI 로그 추가
+	    System.out.println("Filtering request for URI: " + request.getRequestURI());
 
 	    // 쿠키에서 토큰 추출
 	    Cookie[] cookies = request.getCookies();
