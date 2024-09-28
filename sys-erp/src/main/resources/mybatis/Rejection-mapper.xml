@@ -2,16 +2,16 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.erp.dao.RejectionDAO">
+<mapper namespace="RejectionDao">
 
     <!-- 반려 정보 삽입 -->
-    <insert id="insertRejection" parameterType="com.erp.dto.RejectionDto">
+    <insert id="insertRejection" parameterType="RejectionDto">
         INSERT INTO rejections (rejection_document, rejection_emp, rejection_reason, rejection_createAt)
         VALUES (#{rejectionDocument}, #{rejectionEmp}, #{rejectionReason}, #{rejectionCreateAt})
     </insert>
 
     <!-- 특정 문서에 대한 반려 정보 조회 -->
-    <select id="getRejectionByDocument" parameterType="int" resultType="com.erp.dto.RejectionDto">
+    <select id="getRejectionByDocument" parameterType="int" resultType="RejectionDto">
         SELECT * FROM rejections WHERE rejection_document = #{rejectionDocument}
     </select>
 
