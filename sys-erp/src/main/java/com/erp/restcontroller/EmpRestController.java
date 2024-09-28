@@ -45,7 +45,7 @@ public class EmpRestController {
 		EmpDto empDto = empDao.selectOneById(loginVO.getEmpId());
 		if (empDto != null && encoder.matches(loginVO.getEmpPassword(), empDto.getEmpPassword())) {
 			// 토큰(Access / Refresh) 생성
-			String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail());
+			String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail(), empDto.getEmpRole());
 			String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail());
 
 			// LoginResponseDto 객체 생성
@@ -59,7 +59,7 @@ public class EmpRestController {
 //	        accessTokenCookie.setSecure(true); // Secure 설정 (HTTPS 환경에서)
 	        accessTokenCookie.setSecure(false); // Secure 설정 (HTTPS 환경에서)
 	        accessTokenCookie.setPath("/"); // Path 설정
-	        accessTokenCookie.setMaxAge(60 * 15); // 15분 만료
+	        accessTokenCookie.setMaxAge(60 * 5); // 5분 만료
 
 	        // Refresh Token 쿠키 설정
 	        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
@@ -71,6 +71,8 @@ public class EmpRestController {
 	        // 쿠키 응답에 추가
 	        response.addCookie(accessTokenCookie);
 	        response.addCookie(refreshTokenCookie);
+	        
+	        //+추가할거면 리멤버 미 정도?
 
 			return ResponseEntity.ok(responseDto);
 		} else {

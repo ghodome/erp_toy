@@ -16,7 +16,6 @@ public class EmpMapper implements RowMapper<EmpDto> {
 		EmpDto empDto = new EmpDto();
 		empDto.setEmpId(rs.getString("emp_id"));
 		empDto.setEmpPassword(rs.getString("emp_password"));
-		empDto.setEmpUserType(rs.getString("emp_user_type"));
 		empDto.setEmpNo(rs.getString("emp_no"));
 		empDto.setEmpName(rs.getString("emp_name"));
 		empDto.setEmpLevel(rs.getString("emp_level"));
