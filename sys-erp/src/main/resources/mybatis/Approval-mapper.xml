@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ApprovalDao">
+
+    <!-- 결재 정보 삽입 -->
+    <insert id="insertApproval" parameterType="ApprovalDto">
+        INSERT INTO approvals (approval_document, approval_emp, approval_order, approval_status)
+        VALUES (#{approvalDocument}, #{approvalEmp}, #{approvalOrder}, #{approvalStatus})
+    </insert>
+
+    <!-- 결재 정보 업데이트 -->
+    <update id="updateApproval" parameterType="ApprovalDto">
+        UPDATE approvals
+        SET approval_document = #{approvalDocument}, approval_emp = #{approvalEmp}, approval_order = #{approvalOrder}, approval_status = #{approvalStatus}
+        WHERE approval_no = #{approvalNo}
+    </update>
+    
+    <select id="getApprovalsByStatus" parameterType="string" resultType="ApprovalDto">
+    SELECT * FROM approvals WHERE approval_status = #{approvalStatus}
+</select>
+    
+
+    <!-- 특정 결재 번호 조회 -->
+    <select id="getApprovalByNo" parameterType="int" resultType="ApprovalDto">
+        SELECT * FROM approvals WHERE approval_no = #{approvalNo}
+    </select>
+
+    <!-- 모든 결재 정보 조회 -->
+    <select id="getAllApprovals" resultType="ApprovalDto">
+        SELECT * FROM approvals
+    </select>
+
+    <!-- 특정 사원의 결재 정보 조회 -->
+    <select id="getApprovalsByEmp" parameterType="string" resultType="ApprovalDto">
+        SELECT * FROM approvals WHERE approval_emp = #{approvalEmp}
+    </select>
+
+</mapper>

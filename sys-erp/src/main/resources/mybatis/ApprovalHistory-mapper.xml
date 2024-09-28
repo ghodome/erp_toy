@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ApprovalHistoryDao">
+
+    <!-- 결재 이력 삽입 -->
+    <insert id="insertApprovalHistory" parameterType="ApprovalHistoryDto">
+        INSERT INTO approval_history (approval_no, approval_emp, approval_previous_status, approval_new_status, approval_change_reason, approval_changedAt)
+        VALUES (#{approvalNo}, #{approvalEmp}, #{approvalPreviousStatus}, #{approvalNewStatus}, #{approvalChangeReason}, #{approvalChangedAt})
+    </insert>
+
+    <!-- 특정 결재 번호에 대한 이력 조회 -->
+    <select id="getApprovalHistoryByApprovalNo" parameterType="int" resultType="ApprovalHistoryDto">
+        SELECT * FROM approval_history WHERE approval_no = #{approvalNo}
+    </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NotificationDao">
+
+    <!-- 알림 삽입 -->
+    <insert id="insertNotification" parameterType="NotificationDto">
+        INSERT INTO notifications (notification_emp, notification_document, notification_type, notification_message, notification_createAt, notification_read)
+        VALUES (#{notificationEmp}, #{notificationDocument}, #{notificationType}, #{notificationMessage}, #{notificationCreateAt}, #{notificationRead})
+    </insert>
+
+    <!-- 특정 사원의 알림 조회 -->
+    <select id="getNotificationsByEmp" parameterType="string" resultType="NotificationDto">
+        SELECT * FROM notifications WHERE notification_emp = #{notificationEmp}
+    </select>
+
+    <!-- 알림 읽음 처리 -->
+    <update id="updateNotificationAsRead" parameterType="int">
+        UPDATE notifications SET notification_read = 'Y' WHERE notification_no = #{notificationNo}
+    </update>
+
+</mapper>

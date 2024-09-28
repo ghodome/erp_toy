@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DocumentDao">
+
+    <!-- 문서 삽입 -->
+    <insert id="insertDocument" parameterType="DocumentDto">
+        INSERT INTO documents (document_title, document_content, document_status, document_createBy, document_createAt, document_updateAt)
+        VALUES (#{documentTitle}, #{documentContent}, #{documentStatus}, #{documentCreateBy}, #{documentCreateAt}, #{documentUpdateAt})
+    </insert>
+
+    <!-- 문서 업데이트 -->
+    <update id="updateDocument" parameterType="DocumentDto">
+        UPDATE documents
+        SET document_title = #{documentTitle}, document_content = #{documentContent}, document_status = #{documentStatus}, document_createBy = #{documentCreateBy}, document_updateAt = #{documentUpdateAt}
+        WHERE document_no = #{documentNo}
+    </update>
+
+    <!-- 특정 문서 조회 -->
+    <select id="getDocumentByNo" parameterType="int" resultType="DocumentDto">
+        SELECT * FROM documents WHERE document_no = #{documentNo}
+    </select>
+
+    <!-- 모든 문서 조회 -->
+    <select id="getAllDocuments" resultType="DocumentDto">
+        SELECT * FROM documents
+    </select>
+
+    <!-- 특정 상태의 문서 조회 -->
+    <select id="getDocumentsByStatus" parameterType="string" resultType="DocumentDto">
+        SELECT * FROM documents WHERE document_status = #{documentStatus}
+    </select>
+
+</mapper>
