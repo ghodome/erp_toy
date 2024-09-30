@@ -1,38 +1,48 @@
 package com.erp.restcontroller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.erp.dto.DocumentDto;
+import com.erp.service.DocumentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Map;
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000"})//CORS 해제 설정
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentRestController {
 
-    @GetMapping("/list")
-    public List<Map<String, String>> getDocuments() {
-        List<Map<String, String>> documents = new ArrayList<>();
+    @Autowired
+    private DocumentService documentService;
 
-        // 샘플 데이터 생성
-        Map<String, String> doc1 = new HashMap<>();
-        doc1.put("번호", "1");
-        doc1.put("카테고리", "인사");
-        doc1.put("서브카테고리", "계약");
-        doc1.put("제목", "근로계약 요청서");
+    @GetMapping("/category/{categoryCode}")
+    public ResponseEntity<List<DocumentDto>> getDocumentsByCategory(@PathVariable int categoryCode) {
+        List<DocumentDto> documents = documentService.findByCategory(categoryCode);
+        return ResponseEntity.ok(documents);
+    }
 
-        Map<String, String> doc2 = new HashMap<>();
-        doc2.put("번호", "2");
-        doc2.put("카테고리", "인사");
-        doc2.put("서브카테고리", "계약");
-        doc2.put("제목", "퇴직처리 요청서");
+    @PostMapping
+    public ResponseEntity<Void> createDocument(@RequestBody DocumentDto documentDto) {
+        documentService.saveDocument(documentDto);
+        return ResponseEntity.ok().build();
+    }
 
-        documents.add(doc1);
-        documents.add(doc2);
+    @GetMapping("/{documentNo}")
+    public ResponseEntity<DocumentDto> getDocumentById(@PathVariable int documentNo) {
+        DocumentDto document = documentService.findById(documentNo);
+        return ResponseEntity.ok(document);
+    }
 
-        return documents; // JSON으로 반환
+    @PutMapping("/{documentNo}")
+    public ResponseEntity<Void> updateDocument(@PathVariable int documentNo, @RequestBody DocumentDto documentDto) {
+        documentDto.setDocumentNo(documentNo);
+        boolean updated = documentService.updateDocument(documentDto);
+        return updated ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+    @DeleteMapping("/{documentNo}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable int documentNo) {
+        boolean deleted = documentService.deleteDocument(documentNo);
+        return deleted ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 }

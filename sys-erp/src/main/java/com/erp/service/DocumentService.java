@@ -1,14 +1,11 @@
 package com.erp.service;
 
-import java.util.List;
-
-
+import com.erp.dao.DocumentDao;
+import com.erp.dto.DocumentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import com.erp.dao.DocumentDao;
-import com.erp.dto.DocumentDto;
+import java.util.List;
 
 @Service
 public class DocumentService {
@@ -16,23 +13,23 @@ public class DocumentService {
     @Autowired
     private DocumentDao documentDao;
 
-    public void addDocument(DocumentDto documentDto) {
-        documentDao.insertDocument(documentDto);
+    public List<DocumentDto> findByCategory(int categoryCode) {
+        return documentDao.selectListByCategory(categoryCode);
     }
 
-    public void modifyDocument(DocumentDto documentDto) {
-        documentDao.updateDocument(documentDto);
+    public void saveDocument(DocumentDto documentDto) {
+        documentDao.insert(documentDto);
     }
 
-    public DocumentDto findDocumentByNo(int documentNo) {
-        return documentDao.getDocumentByNo(documentNo);
+    public DocumentDto findById(int documentNo) {
+        return documentDao.selectOne(documentNo);
     }
 
-    public List<DocumentDto> findAllDocuments() {
-        return documentDao.getAllDocuments();
+    public boolean updateDocument(DocumentDto documentDto) {
+        return documentDao.update(documentDto);
     }
-    
-    public List<DocumentDto> findDocumentsByStatus(String documentStatus) {
-        return documentDao.getDocumentsByStatus(documentStatus);
+
+    public boolean deleteDocument(int documentNo) {
+        return documentDao.delete(documentNo);
     }
 }
