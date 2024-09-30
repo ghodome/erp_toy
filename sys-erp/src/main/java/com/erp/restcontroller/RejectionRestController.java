@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.erp.dto.RejectionDto;
 import com.erp.service.RejectionService;
-
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @RequestMapping("/api/rejections")
 public class RejectionRestController {
