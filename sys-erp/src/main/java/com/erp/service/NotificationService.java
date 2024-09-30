@@ -1,12 +1,11 @@
 package com.erp.service;
 
-import java.util.List;
-
+import com.erp.dao.NotificationDao;
+import com.erp.dto.NotificationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.erp.dao.NotificationDao;
-import com.erp.dto.NotificationDto;
+import java.util.List;
 
 @Service
 public class NotificationService {
@@ -14,15 +13,11 @@ public class NotificationService {
     @Autowired
     private NotificationDao notificationDao;
 
-    public void addNotification(NotificationDto notificationDto) {
-        notificationDao.insertNotification(notificationDto);
+    public void saveNotification(NotificationDto notificationDto) {
+        notificationDao.insert(notificationDto);
     }
 
-    public List<NotificationDto> findNotificationsByEmp(String notificationEmp) {
-        return notificationDao.getNotificationsByEmp(notificationEmp);
-    }
-
-    public void markNotificationAsRead(int notificationNo) {
-        notificationDao.updateNotificationAsRead(notificationNo);
+    public List<NotificationDto> getNotificationsByEmp(String empId) {
+        return notificationDao.selectListByEmp(empId);
     }
 }
