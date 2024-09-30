@@ -1,11 +1,11 @@
 package com.erp.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.stereotype.Service;
-
 import com.erp.dao.RejectionDao;
 import com.erp.dto.RejectionDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class RejectionService {
@@ -13,11 +13,11 @@ public class RejectionService {
     @Autowired
     private RejectionDao rejectionDao;
 
-    public void addRejection(RejectionDto rejectionDto) {
-        rejectionDao.insertRejection(rejectionDto);
+    public void saveRejection(RejectionDto rejectionDto) {
+        rejectionDao.insert(rejectionDto);
     }
 
-    public RejectionDto findRejectionByDocument(int rejectionDocument) {
-        return rejectionDao.getRejectionByDocument(rejectionDocument);
+    public List<RejectionDto> getRejectionsByDocument(int documentNo) {
+        return rejectionDao.selectListByDocument(documentNo);
     }
 }
