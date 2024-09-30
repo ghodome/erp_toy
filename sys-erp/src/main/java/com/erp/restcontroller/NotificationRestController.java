@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.erp.dto.NotificationDto;
 import com.erp.service.NotificationService;
-
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationRestController {
