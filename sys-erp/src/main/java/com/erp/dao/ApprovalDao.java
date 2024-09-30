@@ -1,25 +1,22 @@
 package com.erp.dao;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import com.erp.dto.ApprovalDto;
-@Mapper
-public interface ApprovalDao {
 
-    void insertApproval(ApprovalDto approvalDto);
+@Repository
+public class ApprovalDao {
 
-    void updateApproval(ApprovalDto approvalDto);
+    @Autowired
+    private SqlSession sqlSession;
 
-    ApprovalDto getApprovalByNo(@Param("approvalNo") int approvalNo);
+    public void insert(ApprovalDto dto) {
+        sqlSession.insert("approval.save", dto);
+    }
 
-    List<ApprovalDto> getAllApprovals();
-    
-    List<ApprovalDto> getApprovalsByEmp(@Param("approvalEmp") String approvalEmp);
-    
-    // 결재 상태별 문서 조회
-    List<ApprovalDto> getApprovalsByStatus(@Param("approvalStatus") String approvalStatus);
+    public List<ApprovalDto> selectListByDocument(int documentNo) {
+        return sqlSession.selectList("approval.findByDocument", documentNo);
+    }
 }
