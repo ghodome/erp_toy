@@ -34,7 +34,9 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable()) // CSRF 비활성화
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/emp/login").permitAll() // 로그인 엔드포인트 허용
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/emp/login").permitAll()
+						.requestMatchers("/emp/logout").permitAll()// 로그인 엔드포인트 허용
+						.requestMatchers("/auth/").permitAll()
 						.requestMatchers("/v3/api-docs/**", // API 문서 경로 허용
 											"/swagger-resources/**", 
 											"/swagger-ui/**", 
