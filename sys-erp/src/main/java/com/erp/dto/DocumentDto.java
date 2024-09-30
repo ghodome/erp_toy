@@ -15,4 +15,5 @@ public class DocumentDto {
 	private String documentCreateBy;
 	private Date documentCreateAt;
 	private Date documentUpdateAt;
+	private int category_code;
 }
