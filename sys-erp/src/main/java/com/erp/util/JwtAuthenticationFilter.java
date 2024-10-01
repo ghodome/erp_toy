@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		String[] excludePath = {"/swagger-ui/**", "/v3/**", "/swagger-resources/**", "/webjars/**", "/api-docs/**" };
+		String[] excludePath = {"/**", "/swagger-ui/**", "/v3/**", "/swagger-resources/**", "/webjars/**", "/api-docs/**" };
 		String path = request.getRequestURI();
 
 		// 경로가 매칭되는지 확인
