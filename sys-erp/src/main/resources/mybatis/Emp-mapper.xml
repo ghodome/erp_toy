@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- myBatis mapper에 필요한 태그 정보를 불러오도록 설정 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="emp">
+
+	<!-- 데이터 등록 -->
+	<insert id="insert">
+		INSERT INTO emp (
+		emp_id, emp_password, emp_name,
+		emp_level, emp_dept, emp_gender, emp_hp, emp_email, emp_birth, emp_sdate,
+		emp_edu,
+		emp_post, emp_address1, emp_address2
+		)
+		VALUES (
+		#{empId}, #{empPassword}, #{empName},
+		#{empLevel}, #{empDept}, #{empGender}, #{empHp}, #{empEmail}, #{empBirth},
+		#{empSdate},
+		#{empEdu},
+		#{empPost}, #{empAddress1}, #{empAddress2}
+		)
+	</insert>
+
+	<!-- 데이터 조회 / 검색 -->
+    <select id="selectEmpList" resultType="EmpDto">
+        SELECT *
+        FROM emp
+        <where>
+            <if test="column != null and keyword != null">
+                instr(${column}, #{keyword}) > 0
+            </if>
+        </where>
+        <if test="column != null">
+            ORDER BY ${column}, emp_no ASC
+        </if>
+    </select>
+    
+    <!-- 데이터 상세 조회 -->
+    <select id="selectEmpById" resultType="EmpDto">
+        SELECT *
+        FROM emp
+        WHERE emp_id = #{empId}
+    </select>
+</mapper>

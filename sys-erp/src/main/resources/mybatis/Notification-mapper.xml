@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="notification">
+  <insert id="save" parameterType="com.erp.dto.NotificationDto">
+    insert into notification (notification_emp, notification_document, notification_type, notification_message, notification_createAt, notification_read)
+    values (#{notificationEmp}, #{notificationDocument}, #{notificationType}, #{notificationMessage}, #{notificationCreateAt}, #{notificationRead})
+  </insert>
+
+  <select id="findByEmp" resultType="com.erp.dto.NotificationDto">
+    select * from notification where notification_emp = #{empId}
+  </select>
+</mapper>
