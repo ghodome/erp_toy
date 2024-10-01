@@ -1,10 +1,17 @@
 package com.erp.restcontroller;
 
+import java.util.stream.Collectors;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,7 +67,7 @@ public class EmpRestController {
 			String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail(),
 					empDto.getEmpRole());
 			String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail());
-			
+
 			// 기존 쿠키가 있으면 삭제
 			Cookie existingAccessToken = new Cookie("accessToken", null);
 			existingAccessToken.setPath("/");
@@ -96,7 +103,7 @@ public class EmpRestController {
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 		// 쿠키 두개를 싹다 지우면 된다
 		Cookie[] cookies = request.getCookies();
-		
+
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("accessToken")) {
@@ -113,12 +120,43 @@ public class EmpRestController {
 			}
 		}
 	}
-	
-	
+
 	// 서명 저장
 	@PostMapping("/saveSignature")
 	public ResponseEntity<String> saveSignature(@RequestBody EmpDto empDto) {
 		empService.saveSignature(empDto); // empService 인스턴스 메서드 호출
 		return ResponseEntity.ok("Signature saved successfully");
+	}
+
+	// 인증된 사용자 정보를 반환하는 엔드포인트
+//    @GetMapping("/me")
+//    public ResponseEntity<?> getCurrentUser() {
+//        // 현재 인증된 사용자 정보 가져오기
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = (String) authentication.getName();  // 인증된 사용자의 username
+//        
+//        // 데이터베이스에서 사용자 정보 조회
+//        EmpDto empDto = sqlSession.selectOne("emp.selectEmpById", username);
+//
+//        if (empDto != null) {
+//            // 사용자 정보 반환
+//            return ResponseEntity.ok(empDto);
+//        } else {
+//            return ResponseEntity.status(404).body("사용자를 찾을 수 없습니다.");
+//        }
+//    }
+	// 인증된 사용자 정보를 반환하는 엔드포인트
+	@GetMapping("/me")
+	public String getCurrentUser() {
+
+		// 현재 인증된 사용자 정보 가져오기
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.isAuthenticated()) {
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			System.out.println("userDetails = " + userDetails.getUsername() + " "+ userDetails.getAuthorities());
+			return userDetails.getUsername(); // 또는 getId() 등 필요한 속성을 반환
+		}
+		return null; // 사용자 정보가 없을 경우 처리
+
 	}
 }
