@@ -7,4 +7,5 @@ public class StorageDto {
 	private int storageNo;
 	private String starageLocation;
 	private String storageAvailable;
+	private String storageCate;
 }

@@ -8,5 +8,8 @@ public class ProductDto {
 	private String productName;
 	private String productCode;
 	private String productDetail;
-	private String productCategory;
+	private String productCate;
+	private String productWeight;
+	private String productSerial;
+	private String productStatus;
 }
