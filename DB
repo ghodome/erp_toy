@@ -62,3 +62,14 @@ CREATE TABLE chat (
     CONSTRAINT FK_emp_to_chat FOREIGN KEY (emp_id)
         REFERENCES emp (emp_id)
 );
+CREATE TABLE "port" (
+	"port_no"	number		NOT NULL,
+	"port_mananger"	varchar2(30)	references emp(emp_no) on delete cascade	NOT NULL,
+	"port_product_no"	number	references product(product_no) on delete cascade	NOT NULL,
+	"port_storage_no"	number	references storage(storage_no) on delete cascade 	NOT NULL,
+	"port_qty"	number		NULL,
+	"port_trading_value"	number		NULL,
+	"port_correspondent"	varchar2(30)		NULL,
+	"port_unit"	varchar2(30)		NULL,
+	"port_date"	date		NULL
+); 
