@@ -1,25 +1,21 @@
 package com.erp.restcontroller;
 
-
-
-
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
 import com.erp.dto.EmpDto;
 import com.erp.vo.LoginVO;
 
@@ -68,7 +64,8 @@ public class EmpRestController {
 			// 토큰(Access / Refresh) 생성
 			String accessToken = jwtProvider.generateToken(empDto.getEmpId(), empDto.getEmpEmail(),
 					empDto.getEmpRole());
-			String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail());
+			String refreshToken = jwtProvider.generateRefreshToken(empDto.getEmpId(), empDto.getEmpEmail(),
+					loginVO.isRemeberMe());
 
 			// 기존 쿠키가 있으면 삭제
 			Cookie existingAccessToken = new Cookie("accessToken", null);
@@ -88,7 +85,14 @@ public class EmpRestController {
 			refreshTokenCookie.setHttpOnly(true);
 			refreshTokenCookie.setSecure(false); // HTTPS 환경에서는 true로 설정
 			refreshTokenCookie.setPath("/");
-			refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7일 만료
+			// RememberMe 옵션에 따라
+			if (loginVO.isRemeberMe()) {
+				// 쿠키 만료일 1년으로
+				refreshTokenCookie.setMaxAge(365 * 24 * 60 * 60);
+			} else {
+				// 쿠키 만료일 7일으로
+				refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+			}
 
 			// 쿠키 응답에 추가
 			response.addCookie(accessTokenCookie);
@@ -148,15 +152,40 @@ public class EmpRestController {
 //        }
 //    }
 	// 인증된 사용자 정보를 반환하는 엔드포인트
-	@GetMapping("/me")
-	public String getCurrentUser() {
+	@PostMapping("/me")
+	public Map<String, String> getCurrentUser() {
 
 		// 현재 인증된 사용자 정보 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()) {
-			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-			System.out.println("userDetails = " + userDetails.getUsername() + " "+ userDetails.getAuthorities());
-			return userDetails.getUsername(); // 또는 getId() 등 필요한 속성을 반환
+			Object principal = authentication.getPrincipal();
+
+			String username = null;
+			String userRole = null;
+
+			if (principal instanceof UserDetails) {
+				// UserDetails로 캐스팅하여 사용자 정보 가져오기
+				UserDetails userDetails = (UserDetails) principal;
+				username = userDetails.getUsername();
+				userRole = userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
+						.orElse("No authority").trim();
+			} else {
+				// principal이 String 타입인 경우 (예: 사용자 이름)
+				username = principal.toString();
+				userRole = "No authority"; // 기본값 설정
+			}
+
+			System.out.println("userDetails = " + username + " " + userRole);
+
+			// Map 객체 생성
+			Map<String, String> userInfo = new HashMap<>(); // HashMap으로 생성
+
+			// 사용자 이름과 권한 추가
+			userInfo.put("userName", username);
+			userInfo.put("userRole", userRole);
+
+			System.out.println(userInfo);
+			return userInfo; // 또는 getId() 등 필요한 속성을 반환
 		}
 		return null; // 사용자 정보가 없을 경우 처리
 
