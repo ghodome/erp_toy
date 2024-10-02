@@ -1,6 +1,7 @@
 package com.erp.restcontroller;
 
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.erp.dao.EmpDao;
 import com.erp.dto.EmpDto;
 import com.erp.vo.LoginVO;
 
@@ -146,15 +145,26 @@ public class EmpRestController {
 //        }
 //    }
 	// 인증된 사용자 정보를 반환하는 엔드포인트
-	@GetMapping("/me")
-	public String getCurrentUser() {
+	@PostMapping("/me")
+	public Map<String, String> getCurrentUser() {
 
 		// 현재 인증된 사용자 정보 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()) {
 			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 			System.out.println("userDetails = " + userDetails.getUsername() + " "+ userDetails.getAuthorities());
-			return userDetails.getUsername(); // 또는 getId() 등 필요한 속성을 반환
+			// Map 객체 생성
+            Map<String, String> userInfo = new HashMap<>(); // HashMap으로 생성
+            
+            // 사용자 이름과 권한 추가
+            userInfo.put("userName", userDetails.getUsername());
+            userInfo.put("userRole", userDetails.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .orElse("No authority").trim());
+
+			System.out.println(userInfo);
+			return userInfo; // 또는 getId() 등 필요한 속성을 반환
 		}
 		return null; // 사용자 정보가 없을 경우 처리
 
