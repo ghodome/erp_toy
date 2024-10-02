@@ -151,22 +151,39 @@ public class EmpRestController {
 		// 현재 인증된 사용자 정보 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()) {
-			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-			System.out.println("userDetails = " + userDetails.getUsername() + " "+ userDetails.getAuthorities());
-			// Map 객체 생성
-            Map<String, String> userInfo = new HashMap<>(); // HashMap으로 생성
-            
-            // 사용자 이름과 권한 추가
-            userInfo.put("userName", userDetails.getUsername());
-            userInfo.put("userRole", userDetails.getAuthorities().stream()
-                    .findFirst()
-                    .map(GrantedAuthority::getAuthority)
-                    .orElse("No authority").trim());
+		    Object principal = authentication.getPrincipal();
 
-			System.out.println(userInfo);
-			return userInfo; // 또는 getId() 등 필요한 속성을 반환
+		    String username;
+		    String userRole;
+
+		    if (principal instanceof UserDetails) {
+		        // UserDetails로 캐스팅하여 사용자 정보 가져오기
+		        UserDetails userDetails = (UserDetails) principal;
+		        username = userDetails.getUsername();
+		        userRole = userDetails.getAuthorities().stream()
+		                .findFirst()
+		                .map(GrantedAuthority::getAuthority)
+		                .orElse("No authority").trim();
+		    } else {
+		        // principal이 String 타입인 경우 (예: 사용자 이름)
+		        username = principal.toString();
+		        userRole = "No authority"; // 기본값 설정
+		    }
+
+		    System.out.println("userDetails = " + username + " " + userRole);
+		    
+		    // Map 객체 생성
+		    Map<String, String> userInfo = new HashMap<>(); // HashMap으로 생성
+		    
+		    // 사용자 이름과 권한 추가
+		    userInfo.put("userName", username);
+		    userInfo.put("userRole", userRole);
+
+		    System.out.println(userInfo);
+		    return userInfo; // 또는 getId() 등 필요한 속성을 반환
 		}
 		return null; // 사용자 정보가 없을 경우 처리
+
 
 	}
 }
