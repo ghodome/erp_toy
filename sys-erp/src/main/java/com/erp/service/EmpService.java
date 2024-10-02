@@ -1,5 +1,6 @@
 package com.erp.service;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ public class EmpService {
 
     @Autowired
     private EmpDao empDao;
+    
+    @Autowired
+    private SqlSession sqlSession;
 
     /**
      * 사원 정보 조회
@@ -46,5 +50,14 @@ public class EmpService {
     public void registerEmp(EmpDto empDto) {
         empDao.insert(empDto);
     }
+    
+    public EmpDto findEmpByNo(String empNo) {
+        return sqlSession.selectOne("emp.selectEmpByNo", empNo);
+    }
+
+    public void updateEmp(EmpDto empDto) {
+        sqlSession.update("emp.update", empDto);
+    }
+
 }
 

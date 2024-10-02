@@ -4,6 +4,7 @@ import com.erp.dao.DocumentDao;
 import com.erp.dto.DocumentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class DocumentService {
     public List<DocumentDto> findByCategory(int categoryCode) {
         return documentDao.selectListByCategory(categoryCode);
     }
-
+    @Transactional
     public void saveDocument(DocumentDto documentDto) {
         documentDao.insert(documentDto);
     }
