@@ -73,6 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 현재 존재하는 accessToken에서 loginId의 클레임 값을 가져옴
 			String username = jwtProvider.extractAllClaims(accessToken).get("loginId", String.class);
 			
+			//커스텀 유저 디테일 서비스에서 값을 가져옴
 			UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 			
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,

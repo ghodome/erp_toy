@@ -1,9 +1,13 @@
 package com.erp.restcontroller;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.erp.util.JwtProvider;
 
 
 // 인증 관련 RestController
@@ -11,6 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthRestController {
+	
+	@Autowired
+	private SqlSession sqlSession;
+
+	@Autowired
+	private JwtProvider jwtProvider;
 
 	@PostMapping("/")
     public void auth() {
