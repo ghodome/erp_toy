@@ -18,11 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.erp.util.JwtAuthenticationFilter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -30,6 +25,9 @@ public class SecurityConfiguration {
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+	// 오늘만 사는 코딩
+	// 정적으로 선언하지 않으면 의존성 순환 발생...
+	// 일단 나중에 해결
 	@Bean
 	public static PasswordEncoder encoder() {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

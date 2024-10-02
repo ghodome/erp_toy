@@ -3,17 +3,16 @@ package com.erp.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@Component
+@Service
 public class JwtProvider {
 
 	@Value("${jwt.secret.key}")
@@ -31,18 +30,26 @@ public class JwtProvider {
 				.claim("email", email) // 커스텀 필드 추가
 				.claim("roles", role) // 커스텀 필드 추가
 				.issuedAt(new Date()) // 발생일 -> 현재
-				.expiration(new Date(System.currentTimeMillis() + 300000))  // 만료일은 5분
-				.issuer("KH14MINI")
-				.signWith(getSigningKey()) // 서명에 사용할 키 정보
+				.expiration(new Date(System.currentTimeMillis() + 300000)) // 만료일은 5분
+				.issuer("KH14MINI").signWith(getSigningKey()) // 서명에 사용할 키 정보
 				.compact();
 	}
 
 	// 리프레시 토큰 생성(RefreshToken)
-	public String generateRefreshToken(String loginId, String email) {
+	public String generateRefreshToken(String loginId, String email, boolean isRemeberMe) {
+
+		Date option;
+
+		if (isRemeberMe) {
+			option = new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365); // 1년
+		} else {
+			option = new Date(System.currentTimeMillis() + 604800000); // 7일
+		}
+
 		return Jwts.builder().claim("loginId", loginId) // 커스텀 필드 추가
 				.claim("email", email) // 커스텀 필드 추가
 				.issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis() + 604800000)) // 7일
+				.expiration(option)
 				.issuer("KH14MINI")
 				.signWith(getSigningKey())
 				.compact();
@@ -52,9 +59,8 @@ public class JwtProvider {
 	public Claims extractAllClaims(String token) {
 		try {
 			// 서명 검증과 함께 Claims 추출
-			return Jwts.parser().verifyWith(getSigningKey())
-					.requireIssuer("KH14MINI")
-					.build().parseSignedClaims(token).getPayload();
+			return Jwts.parser().verifyWith(getSigningKey()).requireIssuer("KH14MINI").build().parseSignedClaims(token)
+					.getPayload();
 		} catch (Exception e) {
 			return null; // 예외 발생 시 null 반환
 		}
