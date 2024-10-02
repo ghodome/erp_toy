@@ -3,8 +3,11 @@ package com.erp.restcontroller;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Map;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -129,9 +132,21 @@ public class EmpRestController {
 
 	// 서명 저장
 	@PostMapping("/saveSignature")
-	public ResponseEntity<String> saveSignature(@RequestBody EmpDto empDto) {
-		empService.saveSignature(empDto); // empService 인스턴스 메서드 호출
-		return ResponseEntity.ok("Signature saved successfully");
+	public ResponseEntity<String> saveSignature(@RequestBody Map<String, String> payload) {
+	    String empNo = payload.get("empNo");
+	    String empSignature = payload.get("empSignature");
+
+	    // empNo로 사원 정보 조회
+	    EmpDto empDto = empService.findEmpByNo(empNo);
+	    if (empDto == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
+	    }
+
+	    // 서명 저장
+	    empDto.setEmpSignature(empSignature);
+	    empService.updateEmp(empDto);
+
+	    return ResponseEntity.ok("서명이 성공적으로 저장되었습니다.");
 	}
 
 	// 인증된 사용자 정보를 반환하는 엔드포인트

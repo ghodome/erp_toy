@@ -22,7 +22,7 @@ public class DocumentMapper implements RowMapper<DocumentDto>{
 		documentDto.setDocumentCreateBy(rs.getString("document_createBy"));
 		documentDto.setDocumentCreateAt(rs.getDate("document_createAt"));
 		documentDto.setDocumentUpdateAt(rs.getDate("document_updateAt"));
-		documentDto.setCategory_code(rs.getInt("category_code"));
+		documentDto.setCategoryCode(rs.getInt("category_code"));
 		
 		return documentDto;
 	}
