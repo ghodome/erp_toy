@@ -169,40 +169,46 @@ public class EmpRestController {
 	// 인증된 사용자 정보를 반환하는 엔드포인트
 	@PostMapping("/me")
 	public Map<String, String> getCurrentUser() {
+	    // 현재 인증된 사용자 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    if (authentication != null && authentication.isAuthenticated()) {
+	        Object principal = authentication.getPrincipal();
 
-		// 현재 인증된 사용자 정보 가져오기
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.isAuthenticated()) {
-			Object principal = authentication.getPrincipal();
+	        String username = null;
+	        String userRole = null;
 
-			String username = null;
-			String userRole = null;
+	        if (principal instanceof UserDetails) {
+	            // UserDetails로 캐스팅하여 사용자 정보 가져오기
+	            UserDetails userDetails = (UserDetails) principal;
+	            username = userDetails.getUsername(); // 사용자 ID (emp_id 또는 emp_no일 수 있음)
+	            userRole = userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
+	                    .orElse("No authority").trim();
+	        } else {
+	            // principal이 String 타입인 경우 (예: 사용자 이름)
+	            username = principal.toString();
+	            userRole = "No authority"; // 기본값 설정
+	        }
 
-			if (principal instanceof UserDetails) {
-				// UserDetails로 캐스팅하여 사용자 정보 가져오기
-				UserDetails userDetails = (UserDetails) principal;
-				username = userDetails.getUsername();
-				userRole = userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
-						.orElse("No authority").trim();
-			} else {
-				// principal이 String 타입인 경우 (예: 사용자 이름)
-				username = principal.toString();
-				userRole = "No authority"; // 기본값 설정
-			}
+	        System.out.println("userDetails = " + username + " " + userRole);
 
-			System.out.println("userDetails = " + username + " " + userRole);
+	        // Map 객체 생성
+	        Map<String, String> userInfo = new HashMap<>(); // HashMap으로 생성
 
-			// Map 객체 생성
-			Map<String, String> userInfo = new HashMap<>(); // HashMap으로 생성
+	        // 사용자 이름과 권한 추가
+	        userInfo.put("userName", username);
+	        userInfo.put("userRole", userRole);
 
-			// 사용자 이름과 권한 추가
-			userInfo.put("userName", username);
-			userInfo.put("userRole", userRole);
+	        // 데이터베이스에서 사용자 정보 조회
+	        EmpDto empDto = sqlSession.selectOne("emp.selectEmpById", username); // 사용자 ID로 사원 정보 조회
+	        if (empDto != null) {
+	            // 사원번호와 휴대전화 추가
+	            userInfo.put("empNo", empDto.getEmpNo());
+	            userInfo.put("empHp", empDto.getEmpHp());
+	        }
 
-			System.out.println(userInfo);
-			return userInfo; // 또는 getId() 등 필요한 속성을 반환
-		}
-		return null; // 사용자 정보가 없을 경우 처리
-
+	        System.out.println(userInfo);
+	        return userInfo; // 사용자 정보 반환
+	    }
+	    return null; // 사용자 정보가 없을 경우 처리
 	}
 }
