@@ -14,8 +14,8 @@ public class PortDao {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	public void insert(PortDto portDto) {
-		sqlSession.insert("port.insert",portDto);
+	public boolean insert(PortDto portDto) {
+		return sqlSession.insert("port.insert",portDto)>0;
 	}
 	public List<PortDto> selectList() {
 		List<PortDto> list = sqlSession.selectList("port.list");
