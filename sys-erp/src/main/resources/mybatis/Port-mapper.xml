@@ -5,12 +5,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="port">
-	<insert id="insert">
+	<insert id="reveive">
 		insert into
 			port(
 				port_no,
 				port_product_no,
-				port_worker,
+				port_manager,
 				port_storage_no,
 				port_qty,
 				port_trading_value,
@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			) values(
 				port_seq.nextval,
 				#{portProductNo},
-				#{portWorker},
+				#{portManager},
 				#{portStorageNo},
 				#{portQty},
 				#{portTrading},
@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where 
 			instr(${column},#{keyword})>0
 		order by 
-			${column} asc, portDate desc
+			${column} asc, port_Date desc
 	</select>
 	<select id="searchByDateAsc" resultType="PortDto">
 		select
@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where 
 			instr(${column},#{keyword})>0
 		order by 
-			${column} asc, portDate asc
+			${column} asc, port_Date asc
 	</select>
 	<select id="sequence">
 		select

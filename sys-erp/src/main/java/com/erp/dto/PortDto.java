@@ -1,15 +1,18 @@
 package com.erp.dto;
 
+import java.util.Date;
+
 import lombok.Data;
 
 @Data
 public class PortDto {
 	private int portNo;
 	private int portProductNo;
-	private String portWorker;
+	private String portManager;
 	private int portStorageNo;
 	private int portQty;
 	private int portTradingValue;
-	private int portCorrespondent;
-	private int portUnit;
+	private String portCorrespondent;
+	private String portUnit;
+	private Date portDate;
 }
