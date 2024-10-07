@@ -15,7 +15,7 @@ public class PortDao {
 	private SqlSession sqlSession;
 	
 	public boolean insert(PortDto portDto) {
-		return sqlSession.insert("port.insert",portDto)>0;
+		return sqlSession.insert("port.reveive",portDto)>0;
 	}
 	public List<PortDto> selectList() {
 		List<PortDto> list = sqlSession.selectList("port.list");
@@ -24,5 +24,8 @@ public class PortDao {
 	public PortDto selectOne(@PathVariable int portNo){
 		PortDto portDto=sqlSession.selectOne("port.one",portNo);
 		return portDto;
+	}
+	public boolean delete(int portNo) {
+		return sqlSession.delete("port.delete",portNo)>0;
 	}
 }
