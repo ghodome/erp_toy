@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000") // React 앱의 포트
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("Authorization", "Content-Type") // 허용할 헤더 지정
+//                .allowedHeaders("Authorization", "Content-Type") // 허용할 헤더 지정
                 .allowCredentials(true);
     }
 }
