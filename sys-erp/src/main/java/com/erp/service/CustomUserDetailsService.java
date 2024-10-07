@@ -27,6 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		}
 		// User 객체를 생성
 		return new User(empDto.getEmpId(), empDto.getEmpPassword(),
-				Collections.singletonList(new SimpleGrantedAuthority(empDto.getEmpUserType())));
+				Collections.singletonList(new SimpleGrantedAuthority(empDto.getEmpRole())));
 	}
 }

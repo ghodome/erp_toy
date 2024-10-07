@@ -1,6 +1,6 @@
 package com.erp.dto;
 
-import java.sql.Date;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -15,4 +15,5 @@ public class DocumentDto {
 	private String documentCreateBy;
 	private Date documentCreateAt;
 	private Date documentUpdateAt;
+	private int categoryCode;
 }

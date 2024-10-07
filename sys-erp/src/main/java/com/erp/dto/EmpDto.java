@@ -8,7 +8,6 @@ import lombok.Data;
 public class EmpDto {
     private String empId;          // emp_id
     private String empPassword;    // emp_password
-    private String empUserType;    // emp_user_type
     private String empNo;          // emp_no
     private String empName;        // emp_name
     private String empLevel;       // emp_level

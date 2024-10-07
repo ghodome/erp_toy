@@ -1,10 +1,10 @@
 package com.erp.configuration;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,38 +13,44 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-//import com.erp.util.JwtAuthenticationFilter;
+import com.erp.util.JwtAuthenticationFilter;
+
 
 @Configuration
 public class SecurityConfiguration {
 
-//	@Autowired
-//	private JwtAuthenticationFilter jwtAuthenticationFilter;
-//
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+	// 오늘만 사는 코딩
+	// 정적으로 선언하지 않으면 의존성 순환 발생...
+	// 일단 나중에 해결
 	@Bean
 	public static PasswordEncoder encoder() {
-		// public BCryptPasswordEncoder encoder() {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		// 원하는 설정을 추가
 		return encoder;
 	}
-//
-//	// Spring Security의 보안 설정
-//	@Bean
-//	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable()) // CSRF 비활성화
-//				.authorizeHttpRequests(auth -> auth.requestMatchers("/emp/login").permitAll() // 로그인 엔드포인트 허용
-//						.requestMatchers("/v3/api-docs/**", // API 문서 경로 허용
-//											"/swagger-resources/**", 
-//											"/swagger-ui/**", 
-//											"/webjars/**").permitAll() // Swagger 엔드포인트 허용
-//						.anyRequest().authenticated() // 나머지 요청은 인증 필요
-//				).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을
-//																												// 사용하지
-//																												// 않음
-//				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
-//		return http.build();
-//	}
+
+	// Spring Security의 보안 설정
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		
+		// CSRF 비활성화
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/emp/login").permitAll()
+						.requestMatchers("/v3/api-docs/**", // API 문서 경로 허용
+								"/swagger-resources/**", "/swagger-ui/**", "/webjars/**")
+						.permitAll() // Swagger 엔드포인트 허용
+						.anyRequest().authenticated() // 나머지 요청은 인증 필요
+				// 세션을 사용하지 않음
+				).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+				// JWT 필터 추가
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
