@@ -1,7 +1,5 @@
 package com.erp.configuration;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.erp.util.JwtAuthenticationFilter;
 
@@ -24,6 +21,19 @@ public class SecurityConfiguration {
 
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+	// 스프링 부트 시큐리티는 첫번째로 CSRF 토큰이 없으면 403 에러를 내보낸다
+	// 근데 이부분은 초반에 CSRF 설정을 해제했기때문에 적용사항이 아니었음
+	// -> 다음 문제 발생 ( 스프링 부트 시큐리티가 원초적으로 403 에러를 내보낸다)
+	// 해결방법 핸들러를 만든다..
+
+	// 미 인증 사용자가 접근할 때 401 Unauthorized 반환
+	@Autowired
+	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+	// 권한이 없는 사용자가 접근할 때 403 Forbidden 반환
+	@Autowired
+	private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 	// 오늘만 사는 코딩
 	// 정적으로 선언하지 않으면 의존성 순환 발생...
@@ -37,16 +47,22 @@ public class SecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    http
-	        .csrf(csrf -> csrf.disable()) // CSRF 비활성화
-	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/emp/login", "/api/documents/**","/**").permitAll() // /api/documents 경로 인증 없이 허용
-	            .requestMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll() // Swagger 엔드포인트 허용
-	            .anyRequest().authenticated() // 나머지 요청은 인증 필요
-	        )
-	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
-	        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+				// csrf 인증 해제
+				.csrf(csrf -> csrf.disable()).exceptionHandling(exception -> exception
+						// 인증 실패 시 401 반환
+						.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+						// 권한 부족 시 403 반환
+						.accessDeniedHandler(jwtAccessDeniedHandler))
+
+				.authorizeHttpRequests(auth -> auth
+						// /emp/me 엔드포인트는 인증 필요
+						.requestMatchers("/emp/me").authenticated().anyRequest().permitAll() // 그 외의 모든 요청은 인증 없이 접근 허용
+				)
+
+				// 세션 정책 설정 (상태 비저장)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 	    return http.build();
 	}
