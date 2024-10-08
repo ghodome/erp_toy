@@ -26,6 +26,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.erp.service.EmpService;
+import com.erp.service.SignatureService;
 import com.erp.util.JwtProvider;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,6 +39,9 @@ public class EmpRestController {
 
 	@Autowired
 	private PasswordEncoder encoder;
+	
+	@Autowired
+	private SignatureService signatureService;
 
 	@Autowired
 	private SqlSession sqlSession;
@@ -129,28 +133,23 @@ public class EmpRestController {
 			}
 		}
 	}
-	// 서명 저장 (EmpRestController.java 수정)
 	@PostMapping("/saveSignature")
 	public ResponseEntity<String> saveSignature(@RequestBody Map<String, String> payload) {
 	    String empNo = payload.get("empNo");
 	    String empSignature = payload.get("empSignature");
-
-	    // 로그 추가
-	    System.out.println("Received signature data: " + empSignature.substring(0, Math.min(50, empSignature.length())) + "...");
 
 	    // 서명 데이터 검증
 	    if (empSignature == null || !empSignature.startsWith("data:image/")) {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바른 서명 데이터를 제공해 주세요.");
 	    }
 
+	    // 서명 데이터를 처리하는 로직
 	    try {
-	        // empNo로 사원 정보 조회
 	        EmpDto empDto = empService.findEmpByNo(empNo);
 	        if (empDto == null) {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
 	        }
 
-	        // 서명 저장
 	        empDto.setEmpSignature(empSignature);
 	        empService.updateEmp(empDto);
 
@@ -160,7 +159,6 @@ public class EmpRestController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서명 저장 중 오류가 발생했습니다.");
 	    }
 	}
-
 
 
 	// 인증된 사용자 정보를 반환하는 엔드포인트
