@@ -49,11 +49,11 @@
         WHERE emp_no = #{empNo}
     </select>
 
-    <!-- 사원 서명 업데이트 -->
-    <update id="update" parameterType="com.erp.dto.EmpDto">
-        UPDATE emp
-        SET emp_signature = #{empSignature}
-        WHERE emp_no = #{empNo}
-    </update>
+    <update id="update">
+    UPDATE emp
+    SET emp_signature = #{empSignature}
+    WHERE emp_no = #{empNo}
+</update>
+    
 
 </mapper>

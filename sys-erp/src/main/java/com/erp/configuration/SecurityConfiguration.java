@@ -45,9 +45,9 @@ public class SecurityConfiguration {
 		return encoder;
 	}
 
-	// Spring Security의 보안 설정
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				// csrf 인증 해제
 				.csrf(csrf -> csrf.disable()).exceptionHandling(exception -> exception
@@ -62,13 +62,11 @@ public class SecurityConfiguration {
 				)
 
 				// 세션 정책 설정 (상태 비저장)
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-				// JWT 필터 추가
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-		return http.build();
+	    return http.build();
 	}
+
 
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
