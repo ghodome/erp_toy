@@ -11,7 +11,7 @@ public class ApprovalDto {
 	private String approvalEmp;
 	private int approvalOrder;
 	private String approvalStatus;
-	private String tes1t;
+	private String test2;
 	
 	
 }
