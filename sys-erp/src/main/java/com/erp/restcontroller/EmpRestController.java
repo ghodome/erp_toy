@@ -129,25 +129,39 @@ public class EmpRestController {
 			}
 		}
 	}
-
-	// 서명 저장
+	// 서명 저장 (EmpRestController.java 수정)
 	@PostMapping("/saveSignature")
 	public ResponseEntity<String> saveSignature(@RequestBody Map<String, String> payload) {
 	    String empNo = payload.get("empNo");
 	    String empSignature = payload.get("empSignature");
 
-	    // empNo로 사원 정보 조회
-	    EmpDto empDto = empService.findEmpByNo(empNo);
-	    if (empDto == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
+	    // 로그 추가
+	    System.out.println("Received signature data: " + empSignature.substring(0, Math.min(50, empSignature.length())) + "...");
+
+	    // 서명 데이터 검증
+	    if (empSignature == null || !empSignature.startsWith("data:image/")) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바른 서명 데이터를 제공해 주세요.");
 	    }
 
-	    // 서명 저장
-	    empDto.setEmpSignature(empSignature);
-	    empService.updateEmp(empDto);
+	    try {
+	        // empNo로 사원 정보 조회
+	        EmpDto empDto = empService.findEmpByNo(empNo);
+	        if (empDto == null) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사원을 찾을 수 없습니다.");
+	        }
 
-	    return ResponseEntity.ok("서명이 성공적으로 저장되었습니다.");
+	        // 서명 저장
+	        empDto.setEmpSignature(empSignature);
+	        empService.updateEmp(empDto);
+
+	        return ResponseEntity.ok("서명이 성공적으로 저장되었습니다.");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서명 저장 중 오류가 발생했습니다.");
+	    }
 	}
+
+
 
 	// 인증된 사용자 정보를 반환하는 엔드포인트
 //    @GetMapping("/me")
@@ -204,6 +218,7 @@ public class EmpRestController {
 	            // 사원번호와 휴대전화 추가
 	            userInfo.put("empNo", empDto.getEmpNo());
 	            userInfo.put("empHp", empDto.getEmpHp());
+	            userInfo.put("empSignature", empDto.getEmpSignature()); // 서명 추가
 	        }
 
 	        System.out.println(userInfo);
