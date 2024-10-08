@@ -1,10 +1,12 @@
 package com.erp.configuration;
 
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,11 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.erp.util.JwtAuthenticationFilter;
 
-
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration {
 
 	@Autowired
@@ -58,8 +61,8 @@ public class SecurityConfiguration {
 		configuration.addAllowedOrigin("http://localhost:3000"); // 허용할 출처
 		// 모든 HTTP 메소드(GET, POST, PUT, DELETE 등)를 허용
 		configuration.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
-//		configuration.addAllowedHeader("*"); // 모든 헤더 허용
-//		configuration.setAllowCredentials(true); // 자격 증명 허용
+		configuration.addAllowedHeader("*"); // 모든 헤더 허용
+		configuration.setAllowCredentials(true); // 자격 증명 허용
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 적용

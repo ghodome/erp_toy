@@ -12,8 +12,8 @@ public class ReservationCleanerService {
     @Autowired
     private MeetingDao meetingDao;
 
-    // 5분마다 실행되도록 설정 (5분 = 300000 ms)
-    @Scheduled(fixedRate = 300000)
+    //월-금 8시부터 18시까지 30분간격으로 실행
+    @Scheduled(cron = "0 0/30 8-18 * * 1-5")
     public void cleanExpiredMeetings() {
         meetingDao.deleteExpiredMeetings(); 
         System.out.println("청소 완료");
