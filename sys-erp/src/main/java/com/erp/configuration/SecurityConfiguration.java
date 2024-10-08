@@ -35,25 +35,22 @@ public class SecurityConfiguration {
 		return encoder;
 	}
 
-	// Spring Security의 보안 설정
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		
-		// CSRF 비활성화
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/emp/login").permitAll()
-						.requestMatchers("/v3/api-docs/**", // API 문서 경로 허용
-								"/swagger-resources/**", "/swagger-ui/**", "/webjars/**")
-						.permitAll() // Swagger 엔드포인트 허용
-						.anyRequest().authenticated() // 나머지 요청은 인증 필요
-				// 세션을 사용하지 않음
-				).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	    http
+	        .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+	        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/emp/login", "/api/documents/**","/**").permitAll() // /api/documents 경로 인증 없이 허용
+	            .requestMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll() // Swagger 엔드포인트 허용
+	            .anyRequest().authenticated() // 나머지 요청은 인증 필요
+	        )
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
+	        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
-				// JWT 필터 추가
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-		return http.build();
+	    return http.build();
 	}
+
 
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {

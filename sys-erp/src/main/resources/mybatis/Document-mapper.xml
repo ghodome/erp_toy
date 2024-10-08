@@ -19,10 +19,15 @@
     select * from document where document_no = #{documentNo}
   </select>
   
-  <update id="edit" parameterType="com.erp.dto.DocumentDto">
-    update document set document_title = #{documentTitle}, document_content = #{documentContent}, 
-      document_status = #{documentStatus}, document_updateAt = #{documentUpdateAt} where document_no = #{documentNo}
-  </update>
+ <update id="updateDocument" parameterType="com.erp.dto.DocumentDto">
+   UPDATE document
+SET 
+    document_status = #{documentStatus},
+    document_updateat = #{documentUpdateAt}
+WHERE document_no = #{documentNo}
+   
+</update>
+ 
   
   <delete id="delete" parameterType="int">
     delete from document where document_no = #{documentNo}
@@ -47,6 +52,10 @@
     #{categoryCode}
   )
 </insert>
+ 
+ <select id="selectAll" resultType="com.erp.dto.DocumentDto">
+    SELECT * FROM document
+</select>
  
   
 </mapper>

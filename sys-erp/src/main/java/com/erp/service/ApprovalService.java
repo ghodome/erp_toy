@@ -18,6 +18,6 @@ public class ApprovalService {
     }
 
     public List<ApprovalDto> getApprovalsByDocument(int documentNo) {
-        return approvalDao.selectListByDocument(documentNo);
+        return approvalDao.selectByDocumentNo(documentNo);
     }
 }

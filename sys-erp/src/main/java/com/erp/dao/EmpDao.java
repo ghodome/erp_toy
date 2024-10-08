@@ -26,15 +26,6 @@ public class EmpDao {
     @Autowired
     private SqlSession sqlSession; // MyBatis SqlSession 추가
 
-    // JdbcTemplate 기반 메서드 (유지)
-    public void updateSignature(EmpDto empDto) {
-        String sql = "UPDATE emp SET emp_signature = ? WHERE emp_id = ?";
-        Object[] data = {
-            empDto.getEmpSignature(),
-            empDto.getEmpId()
-        };
-        jdbcTemplate.update(sql, data);
-    }
 
     // JdbcTemplate 기반 메서드 (유지)
     public void insert(EmpDto empDto) {
@@ -67,18 +58,18 @@ public class EmpDao {
 
   
 
-    // MyBatis 기반 메서드 (추가)
-    public EmpDto selectOneByIdMyBatis(String empId) {
-        return sqlSession.selectOne("emp.selectEmpById", empId);
-    }
-
-    // MyBatis 기반 메서드 (추가)
-    public void updateSignatureMyBatis(EmpDto empDto) {
+ // 사원 서명 업데이트 (MyBatis 사용)
+    public void updateSignature(EmpDto empDto) {
         sqlSession.update("emp.update", empDto);
     }
 
-    // MyBatis 기반 메서드 (추가) - 사원 번호로 정보 조회
-    public EmpDto selectOneByNoMyBatis(String empNo) {
+    // 사원 번호로 정보 조회 (MyBatis 사용)
+    public EmpDto selectOneByNo(String empNo) {
         return sqlSession.selectOne("emp.selectEmpByNo", empNo);
     }
+
+    
+
+   
+
 }

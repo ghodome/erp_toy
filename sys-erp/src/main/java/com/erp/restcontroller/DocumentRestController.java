@@ -1,28 +1,32 @@
 package com.erp.restcontroller;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.Date;
 import org.springframework.http.HttpStatus;
-
-
+import com.erp.dto.ApprovalDto;
 import com.erp.dto.DocumentDto;
+import com.erp.service.ApprovalService;
 import com.erp.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = {"http://localhost:3000"})//CORS 해제 설정
+import java.util.Map;
+import java.util.Date;
+
+@CrossOrigin(origins = {"http://localhost:3000"}) // CORS 설정
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentRestController {
 
     @Autowired
     private DocumentService documentService;
+
+    @Autowired
+    private ApprovalService approvalService;
 
     @GetMapping("/category/{categoryCode}")
     public ResponseEntity<List<DocumentDto>> getDocumentsByCategory(@PathVariable int categoryCode) {
@@ -32,7 +36,6 @@ public class DocumentRestController {
 
     @PostMapping("/")
     public ResponseEntity<Void> createDocument(@RequestBody DocumentDto documentDto) {
-    	System.out.println("documentDto="+documentDto);
         try {
             // 현재 인증된 사용자 ID 설정
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -73,9 +76,30 @@ public class DocumentRestController {
         return updated ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
+    @PutMapping("/{documentNo}/status")
+    public ResponseEntity<Void> updateDocumentStatus(@PathVariable int documentNo, @RequestBody Map<String, String> statusUpdate) {
+        String newStatus = statusUpdate.get("status");
+        DocumentDto documentDto = documentService.findById(documentNo);
+        if (documentDto != null) {
+            documentDto.setDocumentStatus(newStatus);
+            documentDto.setDocumentUpdateAt(new Date());  // 업데이트 날짜 설정
+            boolean updated = documentService.updateDocument(documentDto);
+            return updated ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
     @DeleteMapping("/{documentNo}")
     public ResponseEntity<Void> deleteDocument(@PathVariable int documentNo) {
         boolean deleted = documentService.deleteDocument(documentNo);
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DocumentDto>> getAllDocuments() {
+        List<DocumentDto> documents = documentService.findAll();
+        return ResponseEntity.ok(documents); // List 형식으로 반환
     }
 }
