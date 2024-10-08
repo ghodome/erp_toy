@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="approval">
+  <insert id="save" parameterType="com.erp.dto.ApprovalDto">
+    insert into approval (approval_document, approval_emp, approval_order, approval_status)
+    values (#{approvalDocument}, #{approvalEmp}, #{approvalOrder}, #{approvalStatus})
+  </insert>
+
+  <select id="findByDocument" resultType="com.erp.dto.ApprovalDto">
+    select * from approval where approval_document = #{documentNo}
+  </select>
+</mapper>

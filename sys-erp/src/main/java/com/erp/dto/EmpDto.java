@@ -8,7 +8,6 @@ import lombok.Data;
 public class EmpDto {
     private String empId;          // emp_id
     private String empPassword;    // emp_password
-    private String empUserType;    // emp_user_type
     private String empNo;          // emp_no
     private String empName;        // emp_name
     private String empLevel;       // emp_level
@@ -23,6 +22,6 @@ public class EmpDto {
     private String empPost;        // emp_post
     private String empAddress1;    // emp_address1
     private String empAddress2;    // emp_address2
-    private String empRole;        // emp_role
-    private String empSignature;    // emp_signature
+    private String empRole;        // emp_role // 역할
+    private String empSignature;    // emp_signature --> 전자 서명 data-uri 형식으로 저장할 예정
 }
