@@ -62,11 +62,13 @@ public class SecurityConfiguration {
 				)
 
 				// 세션 정책 설정 (상태 비저장)
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-	    return http.build();
+				// JWT 필터 추가
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
 	}
-
 
 	@Bean
 	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
