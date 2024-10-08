@@ -1,5 +1,7 @@
 package com.erp.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -34,5 +36,36 @@ public class CategoryDao {
 		};
 		jdbcTemplate.update(sql, data);
 	}
+	
+	//Read
+	public List<CategoryDto> selectList() {
+		String sql = "select * from category order by category_code asc";
+		return jdbcTemplate.query(sql, categoryMapper);
+	}
+	public List<CategoryDto> selectListByCategoryOrigin(int categoryNo) {
+		String sql = "select * from category "
+						+ "where category_origin=? "
+						+ "order by category_code asc";
+		Object[] data = {categoryNo};
+		return jdbcTemplate.query(sql, categoryMapper, data);
+	}
+	public List<CategoryDto> selectListByCategoryDepth(int categoryDepth) {
+		String sql = "select * from category "
+						+ "where category_depth=? "
+						+ "order by category_code asc";
+		Object[] data = {categoryDepth};
+		return jdbcTemplate.query(sql, categoryMapper, data);
+	}
+	public void update(CategoryDto categoryDto) {
+		
+	}
+	public List<CategoryDto> selectListAll() {
+		String sql = "select * from category "
+						+ "connect by prior category_code = category_origin "
+						+ "start with category_origin is null "
+						+ "order siblings by category_group asc, category_code asc";
+		return jdbcTemplate.query(sql, categoryMapper);
+	} 
+	
 	
 }
