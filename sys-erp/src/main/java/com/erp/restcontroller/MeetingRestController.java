@@ -18,7 +18,7 @@ import com.erp.dto.MeetingDto;
 import com.erp.dto.RoomDto;
 
 
-@CrossOrigin(origins = { "http://localhost:3000" })
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @RequestMapping("/meeting")
 public class MeetingRestController {
@@ -35,9 +35,10 @@ public class MeetingRestController {
 	
 	// 모든 회의실 예약 목록 조회 GET
 	@GetMapping ("/")
-	List<MeetingDto> list(){
+	public List<MeetingDto> list(){
 		return meetingDao.selectList();
 	}
+	
 	
 	// 예약 번호로 회의실 예약 목록 조회 GET
 	@GetMapping("/{reservationNo}")
@@ -80,5 +81,12 @@ public class MeetingRestController {
 	public RoomDto getRoom(@PathVariable int roomNo) {
 		return roomDao.selectOne(roomNo);
 	}
+	
+	//예약시간 만료된 회의실 자동삭제
+	@DeleteMapping("/deleteExpired")
+	public void deleteExpired() {
+	    meetingDao.deleteExpiredMeetings();
+	}
+	
 	
 }
