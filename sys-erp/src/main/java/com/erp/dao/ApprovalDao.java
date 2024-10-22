@@ -16,7 +16,7 @@ public class ApprovalDao {
         sqlSession.insert("approval.save", dto);
     }
 
-    public List<ApprovalDto> selectListByDocument(int documentNo) {
-        return sqlSession.selectList("approval.findByDocument", documentNo);
+    public List<ApprovalDto> selectByDocumentNo(int documentNo) {
+        return sqlSession.selectList("approval.findByDocumentNo", documentNo);
     }
 }

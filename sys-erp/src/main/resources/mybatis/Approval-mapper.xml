@@ -13,4 +13,9 @@
   <select id="findByDocument" resultType="com.erp.dto.ApprovalDto">
     select * from approval where approval_document = #{documentNo}
   </select>
+  
+   <!-- 문서 번호에 따른 결재자 목록 조회 -->
+    <select id="findByDocumentNo" resultType="com.erp.dto.ApprovalDto">
+        SELECT * FROM approval WHERE approval_document = #{documentNo}
+    </select>
 </mapper>

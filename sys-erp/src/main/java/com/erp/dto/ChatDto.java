@@ -1,6 +1,9 @@
 package com.erp.dto;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -11,6 +14,7 @@ public class ChatDto {
 	private String chatId;
 	private String chatContent;
 	private int chatRead;
-	private Date chatTime;
 	private String chatDelete;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+	private Date chatTime;
 }

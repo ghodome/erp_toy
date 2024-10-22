@@ -33,4 +33,9 @@ public class DocumentService {
     public boolean deleteDocument(int documentNo) {
         return documentDao.delete(documentNo);
     }
+   
+    public List<DocumentDto> findAll() {
+        return documentDao.selectAll();
+}
+ 
 }
