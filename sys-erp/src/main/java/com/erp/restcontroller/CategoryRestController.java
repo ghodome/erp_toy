@@ -3,6 +3,7 @@ package com.erp.restcontroller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,7 @@ import com.erp.dao.CategoryDao;
 import com.erp.dto.CategoryDto;
 
 @RestController
-@RequestMapping("/rest/category")
+@RequestMapping("/category")
 public class CategoryRestController {
 	
 	@Autowired
@@ -34,8 +35,9 @@ public class CategoryRestController {
 		return categoryDao.selectListByCategoryDepth(categoryDepth);
 	}
 	@PutMapping("/")
-	public void edit(@RequestBody CategoryDto categoryDto) {
+	public CategoryDto edit(@RequestBody CategoryDto categoryDto) {
 		categoryDao.update(categoryDto);
+		return categoryDao.selectOne(categoryDto.getCategoryCode());
 	}
 	@PostMapping("/")
 	public CategoryDto insert(@RequestBody CategoryDto categoryDto) { 
@@ -44,8 +46,13 @@ public class CategoryRestController {
 		categoryDao.insert(categoryDto);
 		return categoryDto;
 	}
+	//전체
 	@GetMapping("/all")
 	public List<CategoryDto> allList() {
 		return categoryDao.selectListAll();
+	}
+	@DeleteMapping("/{categoryCode}")
+	public void delete(@PathVariable int categoryCode) {
+		categoryDao.delete(categoryCode);
 	}
 }

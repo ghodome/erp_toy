@@ -56,8 +56,16 @@ public class CategoryDao {
 		Object[] data = {categoryDepth};
 		return jdbcTemplate.query(sql, categoryMapper, data);
 	}
-	public void update(CategoryDto categoryDto) {
-		
+	public boolean update(CategoryDto categoryDto) {
+		String sql = "update category "
+						+ "set "
+							+ "category_name=?, category_note=?, category_enable=? "
+						+ "where category_code=?";
+		Object[] data = {
+			categoryDto.getCategoryName(), categoryDto.getCategoryNote(),
+			categoryDto.getCategoryEnable(), categoryDto.getCategoryCode()
+		};
+		return jdbcTemplate.update(sql, data) > 0;
 	}
 	public List<CategoryDto> selectListAll() {
 		String sql = "select * from category "
@@ -65,7 +73,17 @@ public class CategoryDao {
 						+ "start with category_origin is null "
 						+ "order siblings by category_group asc, category_code asc";
 		return jdbcTemplate.query(sql, categoryMapper);
+	}
+	public boolean delete(int categoryCode) {
+		String sql = "delete category where category_code = ?";
+		Object[] data = {categoryCode};
+		return jdbcTemplate.update(sql, data) > 0;
+	}
+	public CategoryDto selectOne(int categoryCode) {
+		String sql = "select * from category where category_code = ?";
+		Object[] data = {categoryCode};
+		List<CategoryDto> list = jdbcTemplate.query(sql, categoryMapper, data);
+		return list.isEmpty() ? null : list.get(0);
 	} 
-	
 	
 }

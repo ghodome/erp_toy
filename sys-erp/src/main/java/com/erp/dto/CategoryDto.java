@@ -12,6 +12,6 @@ public class CategoryDto {
 	private String categoryNote;
 	private String categoryEnable;
 	private int categoryGroup;
-	private int categoryOrigin;
+	private Integer categoryOrigin;
 	private int categoryDepth;
 }
